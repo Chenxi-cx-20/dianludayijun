@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>电路答疑君</title>
+    <title>Document</title>
 </head>
 <body>
 
@@ -20,35 +20,30 @@
 
     <h2>列表</h2>
     <ul>
-        <li>学习 HTML</li>
-        <li>学习 CSS</li>   
+    <li>学习 HTML</li>
+    <li>学习 CSS</li>   
     </ul>
 
     <button>我是按钮</button>
     <input type="text" placeholder="输入点什么...">
-
-    <!-- 加载 Coze SDK -->
-    <script src="https://lf-cdn.coze.cn/obj/unpkg/flow-platform/chat-app-sdk/latest/libs/cn/index.js"></script>
-
-    <!-- 初始化聊天窗口（关键部分，之前是空的！） -->
+    
+    <script src="https://lf-cdn.coze.cn/obj/unpkg/flow-platform/chat-app-sdk/1.2.0-beta.19/libs/cn/index.js"></script>
     <script>
-        window.addEventListener('load', function() {
-            if (window.CozeWebSDK) {
-                new CozeWebSDK.WebChatClient({
-                    config: {
-                        bot_id: '7562589144795611151',
-                    },
-                    componentProps: {
-                        title: '电路答疑君',
-                        position: 'bottom-right',
-                        draggable: true,
-                    },
-                });
-                console.log('✅ Coze 智能体加载成功！');
-            } else {
-                console.error('❌ CozeWebSDK 未加载，请检查网络');
-            }
-        });
+    new CozeWebSDK.WebChatClient({
+        config: {
+        bot_id: '7562589144795611151',
+        },
+        componentProps: {
+        title: 'Coze',
+        },
+        auth: {
+        type: 'token',
+        token: 'pat_********',
+        onRefreshToken: function () {
+            return 'pat_********'
+        }
+        }
+    });
     </script>
 
 </body>
