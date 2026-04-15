@@ -157,7 +157,7 @@
             }
         });
 
-        // 发送消息到Coze API（已更新为最新路径 /v2/chat）
+        // 发送消息到Coze API（已更新为最新路径 /v3/chat）
         async function sendMessage() {
             const text = userInput.value.trim();
             if (!text) return;
@@ -168,7 +168,7 @@
             const loadingDiv = addMessage('思考中...', 'bot');
 
             try {
-                const res = await fetch('https://api.coze.cn/v2/chat', {
+                const res = await fetch('https://api.coze.cn/v3/chat', {
                     method: 'POST',
                     headers: {
                         'Authorization': `Bearer ${API_KEY}`,
