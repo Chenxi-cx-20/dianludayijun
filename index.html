@@ -4,35 +4,57 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>电路答疑君</title>
+    <style>
+        body {
+            font-family: system-ui, -apple-system, sans-serif;
+            line-height: 1.6;
+            padding: 20px;
+        }
+
+        /* 悬浮对话按钮 */
+        #chat-btn {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            width: 60px;
+            height: 60px;
+            background: #007aff;
+            color: white;
+            font-size: 26px;
+            border-radius: 50%;
+            border: none;
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            z-index: 9999;
+        }
+
+        #chat-btn:hover {
+            transform: scale(1.1);
+            transition: transform 0.2s;
+        }
+    </style>
 </head>
 <body>
-
-    <h1>我的网页</h1>
-    <p>这是我的第一个<br>完整页面</p>
-
-    <h2>图片</h2>
-    <img src="https://picsum.photos/300" alt="风景">
+    <h1>电路答疑君</h1>
+    <p>一个为你量身定做的在线《电路理论》学习助手</p>
 
     <h2>链接</h2>
-    <a href="https://www.baidu.com">百度一下</a>
+    <a href="https://www.baidu.com">来参观一下母校？</a>
 
-    <p>我是文字 <span>我是一小段特殊文字</span></p>
+    <p>我是文字 我是一小段特殊文字</p>
 
     <h2>列表</h2>
     <ul>
-        <li>学习 HTML</li>
-        <li>学习 CSS</li>   
+        <li>第一章</li>
+        <li>第二章</li>
+        <li>第三章</li>
+        <li>…………</li>
     </ul>
 
-    <button>我是按钮</button>
+    <button>我是（目前还不能用的）搜索按钮</button>
     <input type="text" placeholder="输入点什么...">
 
-    <!-- 嵌入你的电路答疑君对话窗口 -->
-    <iframe 
-        src="https://www.coze.cn/store/agent/7562589144795611151?bot_id=true" 
-        style="position: fixed; bottom: 20px; right: 20px; width: 380px; height: 600px; border: none; border-radius: 15px; box-shadow: 0 5px 20px rgba(0,0,0,0.2); z-index: 9999;"
-        allow="clipboard-read; clipboard-write"
-    ></iframe>
-
+    <!-- 点击后直接跳转到Coze对话页面，不会被拦截 -->
+    <button id="chat-btn" onclick="window.open('https://www.coze.cn/store/agent/7562589144795611151', '_blank')">💬</button>
 </body>
 </html>
