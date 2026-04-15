@@ -26,24 +26,24 @@
 
     <button>我是按钮</button>
     <input type="text" placeholder="输入点什么...">
-    
+
     <script src="https://lf-cdn.coze.cn/obj/unpkg/flow-platform/chat-app-sdk/1.2.0-beta.19/libs/cn/index.js"></script>
     <script>
-    new CozeWebSDK.WebChatClient({
+      new CozeWebSDK.WebChatClient({
         config: {
-        bot_id: '7562589144795611151',
+          bot_id: '7562589144795611151',
         },
         componentProps: {
-        title: 'Coze',
+          title: 'Coze',
         },
         auth: {
-        type: 'token',
-        token: 'pat_********',
-        onRefreshToken: function () {
+          type: 'token',
+          token: 'pat_********',
+          onRefreshToken: function () {
             return 'pat_********'
+          }
         }
-        }
-    });
+      });
     </script>
 
 </body>
