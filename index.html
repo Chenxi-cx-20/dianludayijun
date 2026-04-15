@@ -5,10 +5,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>电路答疑君</title>
     <style>
-        /* 聊天窗口：位置上移，避免被按钮遮挡 */
+        /* 聊天窗口：位置明确上移，不会被遮挡 */
         #ai-window {
             position: fixed;
-            bottom: 90px; /* 从原来的20px改成90px，往上移了70px */
+            bottom: 100px !important; /* 强制设置，覆盖任何默认样式 */
             right: 20px;
             width: 380px;
             height: 600px;
@@ -19,7 +19,7 @@
             overflow: hidden;
         }
 
-        /* 悬浮按钮：保持在右下角不动 */
+        /* 悬浮按钮：保持在最底部 */
         #ai-btn {
             position: fixed;
             bottom: 20px;
@@ -62,7 +62,7 @@
     <!-- 悬浮按钮 -->
     <button id="ai-btn">💬</button>
 
-    <!-- 聊天窗口（已上移，不会被遮挡） -->
+    <!-- 聊天窗口（已强制上移，不会被遮挡） -->
     <div id="ai-window">
         <iframe 
             src="https://www.coze.cn/store/agent/7562589144795611151?bot_id=true" 
