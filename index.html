@@ -157,20 +157,18 @@
             }
         });
 
-        // 发送消息到Coze API
+        // 发送消息到Coze API（已更新为最新路径 /v2/chat）
         async function sendMessage() {
             const text = userInput.value.trim();
             if (!text) return;
 
-            // 显示用户消息
             addMessage(text, 'user');
             userInput.value = '';
 
-            // 显示加载提示
             const loadingDiv = addMessage('思考中...', 'bot');
 
             try {
-                const res = await fetch('https://api.coze.cn/v1/chat', {
+                const res = await fetch('https://api.coze.cn/v2/chat', {
                     method: 'POST',
                     headers: {
                         'Authorization': `Bearer ${API_KEY}`,
@@ -178,7 +176,7 @@
                     },
                     body: JSON.stringify({
                         bot_id: BOT_ID,
-                        user_id: 'visitor_' + Date.now(),
+                        user_id: 'user_' + Date.now(),
                         stream: false,
                         messages: [{ role: 'user', content: text, content_type: 'text' }]
                     })
@@ -188,7 +186,7 @@
                 loadingDiv.remove();
 
                 if (data.code !== 0) {
-                    addMessage(`请求出错：${data.msg}`, 'bot');
+                    addMessage(`请求出错: ${data.msg}`, 'bot');
                     return;
                 }
 
