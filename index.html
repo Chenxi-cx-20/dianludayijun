@@ -4,51 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>电路答疑君</title>
-    <style>
-        body {
-            font-family: system-ui, -apple-system, sans-serif;
-            line-height: 1.6;
-            padding: 20px;
-        }
-
-        /* 悬浮按钮 */
-        #ai-btn {
-            position: fixed;
-            bottom: 20px;
-            right: 20px;
-            width: 60px;
-            height: 60px;
-            background: #007aff;
-            color: white;
-            font-size: 26px;
-            border-radius: 50%;
-            border: none;
-            cursor: pointer;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
-            z-index: 9999;
-        }
-
-        /* 聊天窗口 */
-        #ai-window {
-            position: fixed;
-            bottom: 100px;
-            right: 20px;
-            width: 380px;
-            height: 600px;
-            background: white;
-            border-radius: 15px;
-            box-shadow: 0 5px 20px rgba(0,0,0,0.2);
-            display: none;
-            z-index: 9998;
-            overflow: hidden;
-        }
-
-        #ai-window iframe {
-            width: 100%;
-            height: 100%;
-            border: none;
-        }
-    </style>
+    <!-- 引入 Coze 官方 Chat SDK -->
+    <script src="https://lf-cdn.coze.cn/obj/unpkg/flow-platform/chat-app-sdk/1.1.0-beta.0/libs/cn/index.js"></script>
 </head>
 <body>
     <h1>电路答疑君</h1>
@@ -70,29 +27,20 @@
     <button>我是（目前还不能用的）搜索按钮</button>
     <input type="text" placeholder="输入点什么...">
 
-    <!-- 悬浮按钮 -->
-    <button id="ai-btn">💬</button>
-
-    <!-- 聊天窗口（用公开分享链接，免登录） -->
-    <div id="ai-window">
-        <iframe 
-            src="YOUR_SHARE_LINK"
-            allow="clipboard-read; clipboard-write"
-        ></iframe>
-    </div>
-
     <script>
-        const btn = document.getElementById('ai-btn');
-        const win = document.getElementById('ai-window');
-
-        btn.addEventListener('click', () => {
-            if (win.style.display === 'block') {
-                win.style.display = 'none';
-                btn.textContent = '💬';
-            } else {
-                win.style.display = 'block';
-                btn.textContent = '✕';
-            }
+        // 初始化官方免登录聊天窗口
+        new CozeWebSDK.WebChatClient({
+            config: {
+                bot_id: '7562589144795611151', // 你的智能体ID
+            },
+            componentProps: {
+                title: '电路答疑君',
+                welcomeMessage: '我是无所不能的电路大师，尽管问我电路理论相关不懂的问题~',
+            },
+            auth: {
+                token: 'pat_VaZ46sfjO9bOY9qkyxZM9fVpK6mJ2mXyKPePM39S5Y3abewEtCsaxOU9fP6CUuno', // 你的API令牌
+                type: 'token',
+            },
         });
     </script>
 </body>
