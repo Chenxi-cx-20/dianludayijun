@@ -4,6 +4,43 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>电路答疑君</title>
+    <style>
+        /* 最小化按钮 */
+        #ai-btn {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            width: 60px;
+            height: 60px;
+            background: #007aff;
+            color: white;
+            font-size: 26px;
+            border-radius: 50%;
+            border: none;
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            z-index: 9999;
+        }
+
+        /* 智能体窗口（完全保持你原来的样式！） */
+        #ai-window {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            width: 380px;
+            height: 600px;
+            z-index: 9998;
+            display: none; /* 默认隐藏 */
+        }
+
+        #ai-window iframe {
+            width: 100% !important;
+            height: 100% !important;
+            border: none !important;
+            border-radius: 15px !important;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.2) !important;
+        }
+    </style>
 </head>
 <body>
 
@@ -27,12 +64,31 @@
     <button>我是按钮</button>
     <input type="text" placeholder="输入点什么...">
 
-    <!-- 嵌入你的电路答疑君对话窗口 -->
-    <iframe 
-        src="https://www.coze.cn/store/agent/7562589144795611151?bot_id=true" 
-        style="position: fixed; bottom: 20px; right: 20px; width: 380px; height: 600px; border: none; border-radius: 15px; box-shadow: 0 5px 20px rgba(0,0,0,0.2); z-index: 9999;"
-        allow="clipboard-read; clipboard-write"
-    ></iframe>
+    <!-- 最小化按钮 -->
+    <button id="ai-btn">💬</button>
+
+    <!-- 智能体窗口（完全保持原样！） -->
+    <div id="ai-window">
+        <iframe 
+            src="https://www.coze.cn/store/agent/7562589144795611151?bot_id=true"
+            allow="clipboard-read; clipboard-write"
+        ></iframe>
+    </div>
+
+    <script>
+        const btn = document.getElementById('ai-btn');
+        const win = document.getElementById('ai-window');
+
+        btn.onclick = function() {
+            if (win.style.display === 'none') {
+                win.style.display = 'block';
+                btn.textContent = '✕';
+            } else {
+                win.style.display = 'none';
+                btn.textContent = '💬';
+            }
+        };
+    </script>
 
 </body>
 </html>
