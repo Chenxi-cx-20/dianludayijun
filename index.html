@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>电路答疑君</title>
 </head>
 <body>
 
@@ -20,25 +20,36 @@
 
     <h2>列表</h2>
     <ul>
-    <li>学习 HTML</li>
-    <li>学习 CSS</li>   
+        <li>学习 HTML</li>
+        <li>学习 CSS</li>   
     </ul>
 
     <button>我是按钮</button>
     <input type="text" placeholder="输入点什么...">
 
+    <!-- 加载 Coze SDK -->
     <script src="https://lf-cdn.coze.cn/obj/unpkg/flow-platform/chat-app-sdk/latest/libs/cn/index.js"></script>
+
+    <!-- 初始化聊天窗口（关键部分，之前是空的！） -->
     <script>
-    new CozeWebSDK.WebChatClient({
-    config: {
-        bot_id: '7562589144795611151',
-    },
-    componentProps: {
-        title: '电路答疑君', // 可以改成你智能体的名字
-        position: 'bottom-right', // 聊天窗位置：右下角
-    },
-    });
+        window.addEventListener('load', function() {
+            if (window.CozeWebSDK) {
+                new CozeWebSDK.WebChatClient({
+                    config: {
+                        bot_id: '7562589144795611151',
+                    },
+                    componentProps: {
+                        title: '电路答疑君',
+                        position: 'bottom-right',
+                        draggable: true,
+                    },
+                });
+                console.log('✅ Coze 智能体加载成功！');
+            } else {
+                console.error('❌ CozeWebSDK 未加载，请检查网络');
+            }
+        });
     </script>
-    
+
 </body>
 </html>
