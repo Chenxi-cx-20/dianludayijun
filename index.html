@@ -5,6 +5,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>电路答疑君</title>
     <style>
+        body {
+            font-family: system-ui, -apple-system, sans-serif;
+            line-height: 1.6;
+            padding: 20px;
+        }
+
         /* 悬浮按钮 */
         #ai-btn {
             position: fixed;
@@ -34,8 +40,8 @@
             box-shadow: 0 5px 20px rgba(0,0,0,0.2);
             display: none;
             z-index: 9998;
-            overflow: hidden;
             flex-direction: column;
+            overflow: hidden;
         }
 
         .chat-header {
@@ -98,7 +104,6 @@
     </style>
 </head>
 <body>
-
     <h1>电路答疑君</h1>
     <p>一个为你量身定做的在线《电路理论》学习助手</p>
 
@@ -152,14 +157,16 @@
             }
         });
 
-        // 发送消息
+        // 发送消息到Coze API
         async function sendMessage() {
             const text = userInput.value.trim();
             if (!text) return;
 
+            // 显示用户消息
             addMessage(text, 'user');
             userInput.value = '';
 
+            // 显示加载提示
             const loadingDiv = addMessage('思考中...', 'bot');
 
             try {
@@ -171,7 +178,7 @@
                     },
                     body: JSON.stringify({
                         bot_id: BOT_ID,
-                        user_id: 'user_' + Date.now(),
+                        user_id: 'visitor_' + Date.now(),
                         stream: false,
                         messages: [{ role: 'user', content: text, content_type: 'text' }]
                     })
@@ -181,7 +188,7 @@
                 loadingDiv.remove();
 
                 if (data.code !== 0) {
-                    addMessage(`请求出错: ${data.msg}`, 'bot');
+                    addMessage(`请求出错：${data.msg}`, 'bot');
                     return;
                 }
 
@@ -194,7 +201,7 @@
             }
         }
 
-        // 添加消息到界面
+        // 把消息添加到聊天界面
         function addMessage(text, role) {
             const div = document.createElement('div');
             div.className = `message ${role}`;
@@ -209,6 +216,5 @@
             if (e.key === 'Enter') sendMessage();
         });
     </script>
-
 </body>
 </html>
