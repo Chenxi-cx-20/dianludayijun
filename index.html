@@ -26,6 +26,19 @@
 
     <button>我是按钮</button>
     <input type="text" placeholder="输入点什么...">
+
+    <script src="https://lf-cdn.coze.cn/obj/unpkg/flow-platform/chat-app-sdk/latest/libs/cn/index.js"></script>
+    <script>
+    new CozeWebSDK.WebChatClient({
+    config: {
+        bot_id: '7562589144795611151',
+    },
+    componentProps: {
+        title: '电路答疑君', // 可以改成你智能体的名字
+        position: 'bottom-right', // 聊天窗位置：右下角
+    },
+    });
+    </script>
     
 </body>
 </html>
