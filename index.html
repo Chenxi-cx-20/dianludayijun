@@ -1,25 +1,11 @@
-    <!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>电路答疑君</title>
     <style>
-        /* 聊天窗口：位置明确上移，不会被遮挡 */
-        #ai-window {
-            position: fixed;
-            bottom: 100px !important; /* 强制设置，覆盖任何默认样式 */
-            right: 20px;
-            width: 380px;
-            height: 600px;
-            border-radius: 15px;
-            box-shadow: 0 5px 20px rgba(0,0,0,0.2);
-            display: none;
-            z-index: 9998;
-            overflow: hidden;
-        }
-
-        /* 悬浮按钮：保持在最底部 */
+        /* 悬浮按钮 */
         #ai-btn {
             position: fixed;
             bottom: 20px;
@@ -35,22 +21,96 @@
             box-shadow: 0 4px 15px rgba(0,0,0,0.2);
             z-index: 9999;
         }
+
+        /* 聊天窗口 */
+        #ai-window {
+            position: fixed;
+            bottom: 100px;
+            right: 20px;
+            width: 380px;
+            height: 600px;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.2);
+            display: none;
+            z-index: 9998;
+            overflow: hidden;
+            flex-direction: column;
+        }
+
+        .chat-header {
+            padding: 16px;
+            background: #007aff;
+            color: white;
+            font-weight: bold;
+            border-radius: 15px 15px 0 0;
+        }
+
+        .chat-body {
+            flex: 1;
+            padding: 16px;
+            overflow-y: auto;
+        }
+
+        .message {
+            margin-bottom: 10px;
+            padding: 10px 14px;
+            border-radius: 16px;
+            max-width: 75%;
+            line-height: 1.4;
+        }
+
+        .user {
+            background: #007aff;
+            color: white;
+            margin-left: auto;
+        }
+
+        .bot {
+            background: #f2f2f7;
+            color: #000;
+            margin-right: auto;
+        }
+
+        .chat-input {
+            display: flex;
+            padding: 12px;
+            gap: 8px;
+            border-top: 1px solid #eee;
+        }
+
+        .chat-input input {
+            flex: 1;
+            padding: 12px 16px;
+            border: 1px solid #ddd;
+            border-radius: 24px;
+            outline: none;
+        }
+
+        .chat-input button {
+            padding: 12px 20px;
+            background: #007aff;
+            color: white;
+            border: none;
+            border-radius: 24px;
+            cursor: pointer;
+        }
     </style>
 </head>
 <body>
 
     <h1>电路答疑君</h1>
-    <p>一个为你量身定做的<br>在线《电路理论》学习助手</p>
+    <p>一个为你量身定做的在线《电路理论》学习助手</p>
 
     <h2>链接</h2>
-    <a href="https://www.bucea.edu.cn/">来参观一下母校？</a>
+    <a href="https://www.baidu.com">来参观一下母校？</a>
 
-    <p>我是文字 <span>我是一小段特殊文字</span></p>
+    <p>我是文字 我是一小段特殊文字</p>
 
     <h2>列表</h2>
     <ul>
         <li>第一章</li>
-        <li>第二章</li>   
+        <li>第二章</li>
         <li>第三章</li>
         <li>…………</li>
     </ul>
@@ -61,27 +121,92 @@
     <!-- 悬浮按钮 -->
     <button id="ai-btn">💬</button>
 
-    <!-- 聊天窗口（已强制上移，不会被遮挡） -->
+    <!-- 聊天窗口 -->
     <div id="ai-window">
-        <iframe 
-            src="https://www.coze.cn/store/agent/7562589144795611151?bot_id=true" 
-            style="width:100%; height:100%; border:none;"
-            allow="clipboard-read; clipboard-write"
-        ></iframe>
+        <div class="chat-header">电路答疑君</div>
+        <div class="chat-body" id="messages"></div>
+        <div class="chat-input">
+            <input type="text" id="user-input" placeholder="输入电路问题...">
+            <button id="send-btn">发送</button>
+        </div>
     </div>
 
     <script>
+        const BOT_ID = "7562589144795611151";
+        const API_KEY = "pat_VaZ46sfjO9bOY9qkyxZM9fVpK6mJ2mXyKPePM39S5Y3abewEtCsaxOU9fP6CUuno";
+
         const btn = document.getElementById('ai-btn');
         const win = document.getElementById('ai-window');
+        const messagesEl = document.getElementById('messages');
+        const userInput = document.getElementById('user-input');
+        const sendBtn = document.getElementById('send-btn');
 
+        // 切换窗口显示/隐藏
         btn.addEventListener('click', () => {
-            if (win.style.display === 'block') {
+            if (win.style.display === 'flex') {
                 win.style.display = 'none';
                 btn.textContent = '💬';
             } else {
-                win.style.display = 'block';
+                win.style.display = 'flex';
                 btn.textContent = '✕';
             }
+        });
+
+        // 发送消息
+        async function sendMessage() {
+            const text = userInput.value.trim();
+            if (!text) return;
+
+            addMessage(text, 'user');
+            userInput.value = '';
+
+            const loadingDiv = addMessage('思考中...', 'bot');
+
+            try {
+                const res = await fetch('https://api.coze.cn/v1/chat', {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': `Bearer ${API_KEY}`,
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        bot_id: BOT_ID,
+                        user_id: 'user_' + Date.now(),
+                        stream: false,
+                        messages: [{ role: 'user', content: text, content_type: 'text' }]
+                    })
+                });
+
+                const data = await res.json();
+                loadingDiv.remove();
+
+                if (data.code !== 0) {
+                    addMessage(`请求出错: ${data.msg}`, 'bot');
+                    return;
+                }
+
+                const answer = data.messages.find(m => m.role === 'assistant')?.content || '抱歉，我暂时无法回答这个问题';
+                addMessage(answer, 'bot');
+            } catch (error) {
+                loadingDiv.remove();
+                addMessage('网络错误，请稍后重试', 'bot');
+                console.error(error);
+            }
+        }
+
+        // 添加消息到界面
+        function addMessage(text, role) {
+            const div = document.createElement('div');
+            div.className = `message ${role}`;
+            div.textContent = text;
+            messagesEl.appendChild(div);
+            messagesEl.scrollTop = messagesEl.scrollHeight;
+            return div;
+        }
+
+        sendBtn.addEventListener('click', sendMessage);
+        userInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') sendMessage();
         });
     </script>
 
