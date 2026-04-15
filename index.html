@@ -10,29 +10,9 @@
             line-height: 1.6;
             padding: 20px;
         }
-
-        /* 悬浮对话按钮 */
-        #chat-btn {
-            position: fixed;
-            bottom: 20px;
-            right: 20px;
-            width: 60px;
-            height: 60px;
-            background: #007aff;
-            color: white;
-            font-size: 26px;
-            border-radius: 50%;
-            border: none;
-            cursor: pointer;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
-            z-index: 9999;
-        }
-
-        #chat-btn:hover {
-            transform: scale(1.1);
-            transition: transform 0.2s;
-        }
     </style>
+    <!-- 引入 Coze 官方 Chat SDK -->
+    <script src="https://lf-cdn.coze.cn/obj/unpkg/flow-platform/chat-app-sdk/1.1.0-beta.0/libs/cn/index.js"></script>
 </head>
 <body>
     <h1>电路答疑君</h1>
@@ -54,7 +34,23 @@
     <button>我是（目前还不能用的）搜索按钮</button>
     <input type="text" placeholder="输入点什么...">
 
-    <!-- 点击后直接跳转到Coze对话页面，100%能正常使用 -->
-    <button id="chat-btn" onclick="window.open('https://www.coze.cn/store/agent/7562589144795611151?bot_id=true', '_blank')">💬</button>
+    <script>
+        // 初始化 Coze 聊天窗口（官方 SDK，免登录）
+        new CozeWebSDK.WebChatClient({
+            config: {
+                bot_id: '7562589144795611151', // 你的智能体ID
+            },
+            componentProps: {
+                title: '电路答疑君',
+                icon: 'https://lf3-static.bytednsdoc.com/obj/eden-cn/6d0f00319f4c41769e01d0e6c646230c/eden-logo.png',
+                layout: 'vertical',
+                welcomeMessage: '我是无所不能的电路大师，尽管问我电路理论相关不懂的问题~',
+            },
+            auth: {
+                token: 'pat_VaZ46sfjO9bOY9qkyxZM9fVpK6mJ2mXyKPePM39S5Y3abewEtCsaxOU9fP6CUuno', // 你的API令牌
+                type: 'token',
+            },
+        });
+    </script>
 </body>
 </html>
