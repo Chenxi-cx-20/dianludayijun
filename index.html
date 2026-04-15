@@ -4,6 +4,75 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>电路答疑君</title>
+    <style>
+        /* 聊天窗口样式 */
+        #ai-chat {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            width: 380px;
+            height: 600px;
+            background: white;
+            border-radius: 18px;
+            box-shadow: 0 8px 30px rgba(0,0,0,0.15);
+            display: flex;
+            flex-direction: column;
+            z-index: 9999;
+            font-family: system-ui;
+        }
+        .chat-header {
+            padding: 16px;
+            background: #007aff;
+            color: white;
+            font-weight: bold;
+            font-size: 16px;
+            border-radius: 18px 18px 0 0;
+        }
+        .chat-body {
+            flex: 1;
+            padding: 16px;
+            overflow-y: auto;
+        }
+        .message {
+            margin-bottom: 10px;
+            padding: 10px 14px;
+            border-radius: 16px;
+            max-width: 75%;
+            line-height: 1.4;
+        }
+        .user {
+            background: #007aff;
+            color: white;
+            margin-left: auto;
+        }
+        .bot {
+            background: #f2f2f7;
+            color: #000;
+            margin-right: auto;
+        }
+        .chat-input {
+            display: flex;
+            padding: 12px;
+            gap: 8px;
+            border-top: 1px solid #eee;
+        }
+        .chat-input input {
+            flex: 1;
+            padding: 12px 16px;
+            border: 1px solid #ddd;
+            border-radius: 24px;
+            outline: none;
+            font-size: 14px;
+        }
+        .chat-input button {
+            padding: 12px 20px;
+            background: #007aff;
+            color: white;
+            border: none;
+            border-radius: 24px;
+            cursor: pointer;
+        }
+    </style>
 </head>
 <body>
 
@@ -27,12 +96,68 @@
     <button>我是按钮</button>
     <input type="text" placeholder="输入点什么...">
 
-    <!-- 加上__skip-auth=1，强制跳过登录校验 -->
-    <iframe 
-        src="https://www.coze.cn/store/agent/7562589144795611151?bot_id=true&__skip-auth=1" 
-        style="position: fixed; bottom: 20px; right: 20px; width: 380px; height: 600px; border: none; border-radius: 15px; box-shadow: 0 5px 20px rgba(0,0,0,0.2); z-index: 9999;"
-        allow="clipboard-read; clipboard-write"
-    ></iframe>
+    <!-- ✅ 纯聊天窗口（你的智能体完整功能） -->
+    <div id="ai-chat">
+        <div class="chat-header">电路答疑君</div>
+        <div class="chat-body" id="messages"></div>
+        <div class="chat-input">
+            <input type="text" id="input" placeholder="输入电路问题...">
+            <button id="send">发送</button>
+        </div>
+    </div>
+
+    <script>
+        // 你的配置（已经全部填好）
+        const BOT_ID = "756258914479561151";
+        const API_KEY = "pat_VaZ46sfjO9bOY9qkyxZM9fVpK6mJ2mXyKPePM39S5Y3abewEtCsaxOU9fP6CUuno";
+
+        const messagesEl = document.getElementById("messages");
+        const inputEl = document.getElementById("input");
+        const sendEl = document.getElementById("send");
+
+        // 发送消息
+        async function send() {
+            const text = inputEl.value.trim();
+            if (!text) return;
+
+            // 显示用户消息
+            addMsg(text, "user");
+            inputEl.value = "";
+
+            try {
+                const res = await fetch("https://api.coze.cn/v1/chat", {
+                    method: "POST",
+                    headers: {
+                        "Authorization": "Bearer " + API_KEY,
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify({
+                        bot_id: BOT_ID,
+                        user_id: "visitor",
+                        messages: [{ role: "user", content: text, content_type: "text" }]
+                    })
+                });
+
+                const data = await res.json();
+                const ans = data.messages?.find(m => m.role === "assistant")?.content || "无法回答";
+                addMsg(ans, "bot");
+            } catch (e) {
+                addMsg("出错了", "bot");
+            }
+        }
+
+        // 添加消息到界面
+        function addMsg(text, role) {
+            const div = document.createElement("div");
+            div.className = "message " + role;
+            div.textContent = text;
+            messagesEl.appendChild(div);
+            messagesEl.scrollTop = messagesEl.scrollHeight;
+        }
+
+        sendEl.onclick = send;
+        inputEl.onkeydown = e => e.key === "Enter" && send();
+    </script>
 
 </body>
 </html>
