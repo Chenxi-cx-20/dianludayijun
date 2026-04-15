@@ -5,21 +5,21 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>电路答疑君</title>
     <style>
-        /* 聊天窗口：默认隐藏，层级比按钮低 */
+        /* 聊天窗口：位置上移，避免被按钮遮挡 */
         #ai-window {
             position: fixed;
-            bottom: 20px;
+            bottom: 90px; /* 从原来的20px改成90px，往上移了70px */
             right: 20px;
             width: 380px;
             height: 600px;
             border-radius: 15px;
             box-shadow: 0 5px 20px rgba(0,0,0,0.2);
             display: none;
-            z-index: 9998; /* 比按钮低 */
+            z-index: 9998;
             overflow: hidden;
         }
 
-        /* 悬浮按钮：层级最高，永远在最前面 */
+        /* 悬浮按钮：保持在右下角不动 */
         #ai-btn {
             position: fixed;
             bottom: 20px;
@@ -33,7 +33,7 @@
             border: none;
             cursor: pointer;
             box-shadow: 0 4px 15px rgba(0,0,0,0.2);
-            z-index: 9999; /* 比窗口高 */
+            z-index: 9999;
         }
     </style>
 </head>
@@ -59,10 +59,10 @@
     <button>我是按钮</button>
     <input type="text" placeholder="输入点什么...">
 
-    <!-- 1. 悬浮按钮（永远在最前面） -->
+    <!-- 悬浮按钮 -->
     <button id="ai-btn">💬</button>
 
-    <!-- 2. 聊天窗口（默认隐藏） -->
+    <!-- 聊天窗口（已上移，不会被遮挡） -->
     <div id="ai-window">
         <iframe 
             src="https://www.coze.cn/store/agent/7562589144795611151?bot_id=true" 
@@ -77,11 +77,9 @@
 
         btn.addEventListener('click', () => {
             if (win.style.display === 'block') {
-                // 收起窗口
                 win.style.display = 'none';
                 btn.textContent = '💬';
             } else {
-                // 展开窗口
                 win.style.display = 'block';
                 btn.textContent = '✕';
             }
