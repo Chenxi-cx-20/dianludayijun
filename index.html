@@ -297,13 +297,7 @@
         </div>
     </div>
 
-    <!-- =============== 所有章节内容 (原样保留，仅作占位展示，已涵盖全部详细内容) =============== -->
-    <!-- 第1章 简略占位(实际内容之前已完整，为了节省篇幅但保留结构，这里使用简洁内容但功能完整) 
-         注：原第四章到第十八章内容已极其详细，为了保持代码可读性，章节占位无需修改，现有内容均保留。 
-         由于原代码已经包含第1~18章完整知识点，此处全部保留不变。 -->
-    <div class="chapterPage" id="ch1"><div class="backBtn" onclick="showHome()">← 返回首页</div><h2>
-
-<!-- 第1章 -->
+    <!-- 第1章 -->
 <div class="chapterPage" id="ch1">
     <div class="backBtn" onclick="showHome()">← 返回首页</div>
     <h2>第一章 电路模型和电路定律</h2>
@@ -1191,8 +1185,7 @@
 </div>
 
 </div>
-
- <!-- ======================= 新增习题测验模块 (Quiz Page) ======================= -->
+    <!-- ======================= 新增习题测验模块 (Quiz Page) ======================= -->
     <div class="quizPage" id="quizPage">
         <div class="quiz-header">
             <h2>📝 电路理论 · 章节测验</h2>
@@ -1510,41 +1503,6 @@
   // 确保导航绑定
   document.getElementById('navKnowledgeBtn').onclick = () => switchToKnowledge();
   document.getElementById('navQuizBtn').onclick = () => window.switchToQuiz();
-</script>
-
-<!--<footer>电路答疑君 © 2026 | 基于邱关源《电路》第五版</footer>-->
-
-
-<script src="https://lf-cdn.coze.cn/obj/unpkg/flow-platform/chat-app-sdk/1.2.0-beta.19/libs/cn/index.js"></script>
-<script>
-  new CozeWebSDK.WebChatClient({
-    config: {
-      bot_id: '7562589144795611151',
-      is1frame:false
-    },
-    componentProps: {
-      title: 'Coze',
-    },
-    auth: {
-      type: 'token',
-      token: 'pat_U1NGpL2RCPd7axIdeyhbnPG7pTLjkgu5tr9PsHNd0BAbVEFCJBplhDGafdiYVB0w',
-      onRefreshToken: function () {
-        return 'pat_U1NGpL2RCPd7axIdeyhbnPG7pTLjkgu5tr9PsHNd0BAbVEFCJBplhDGafdiYVB0w'
-      }
-    }
-  });
-</script>
-
-<script>
-function showHome() {
-    document.getElementById('homePage').style.display = 'block';
-    document.querySelectorAll('.chapterPage').forEach(p => p.style.display = 'none');
-}
-function openChapter(num) {
-    document.getElementById('homePage').style.display = 'none';
-    document.querySelectorAll('.chapterPage').forEach(p => p.style.display = 'none');
-    document.getElementById('ch'+num).style.display = 'block';
-}
 </script>
 </body>
 </html>
