@@ -1,340 +1,405 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>电路答疑君 - 电路理论学伴</title>
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: "Microsoft YaHei", sans-serif;
-        }
-
-        body {
-            background-color: #f5f7fa;
-            color: #333;
-            line-height: 1.6;
-        }
-
-        /* 导航栏 */
-        nav {
-            background-color: #2c3e50;
-            color: white;
-            padding: 1rem 2rem;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            position: sticky;
-            top: 0;
-            z-index: 100;
-        }
-
-        .logo {
-            font-size: 1.5rem;
-            font-weight: bold;
-        }
-
-        .nav-links a {
-            color: white;
-            text-decoration: none;
-            margin-left: 2rem;
-            transition: color 0.3s;
-        }
-
-        .nav-links a:hover {
-            color: #3498db;
-        }
-
-        /* 主容器 */
-        .container {
-            max-width: 1200px;
-            margin: 2rem auto;
-            padding: 0 2rem;
-        }
-
-        /* 首页横幅 */
-        .hero {
-            background: linear-gradient(135deg, #3498db, #2980b9);
-            color: white;
-            padding: 3rem;
-            border-radius: 10px;
-            text-align: center;
-            margin-bottom: 3rem;
-        }
-
-        .hero h1 {
-            font-size: 2.5rem;
-            margin-bottom: 1rem;
-        }
-
-        /* 功能模块 */
-        .section {
-            background: white;
-            border-radius: 10px;
-            padding: 2rem;
-            margin-bottom: 2rem;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
-        }
-
-        .section h2 {
-            color: #2c3e50;
-            margin-bottom: 1.5rem;
-            border-left: 4px solid #3498db;
-            padding-left: 1rem;
-        }
-
-        /* 知识点章节列表 */
-        .chapter-list {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-            gap: 1rem;
-        }
-
-        .chapter-card {
-            background: #f8f9fa;
-            padding: 1.5rem;
-            border-radius: 8px;
-            border-left: 4px solid #3498db;
-            cursor: pointer;
-            transition: all 0.3s;
-        }
-
-        .chapter-card:hover {
-            background: #e9ecef;
-            transform: translateY(-3px);
-        }
-
-        .chapter-card h3 {
-            color: #2c3e50;
-            margin-bottom: 0.5rem;
-        }
-
-        /* 题库模块 */
-        .question-filter {
-            margin-bottom: 1.5rem;
-        }
-
-        .question-filter select {
-            padding: 0.5rem 1rem;
-            border: 1px solid #ddd;
-            border-radius: 5px;
-            margin-right: 1rem;
-        }
-
-        .question-item {
-            background: #f8f9fa;
-            padding: 1.5rem;
-            border-radius: 8px;
-            margin-bottom: 1rem;
-        }
-
-        .question-item h4 {
-            margin-bottom: 0.5rem;
-        }
-
-        .question-options {
-            margin: 1rem 0;
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 0.5rem;
-        }
-
-        .option {
-            padding: 0.5rem;
-            background: white;
-            border: 1px solid #ddd;
-            border-radius: 5px;
-        }
-
-        .answer-btn {
-            background: #3498db;
-            color: white;
-            border: none;
-            padding: 0.5rem 1rem;
-            border-radius: 5px;
-            cursor: pointer;
-            margin-top: 0.5rem;
-        }
-
-        .answer-btn:hover {
-            background: #2980b9;
-        }
-
-        .answer-content {
-            margin-top: 1rem;
-            padding: 1rem;
-            background: #e8f4fc;
-            border-radius: 5px;
-            display: none;
-        }
-
-        /* 页脚 */
-        footer {
-            background-color: #2c3e50;
-            color: white;
-            text-align: center;
-            padding: 1.5rem;
-            margin-top: 3rem;
-        }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>电路答疑君 | 电路理论学伴</title>
+<style>
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: "Microsoft YaHei", sans-serif;
+}
+body {
+    background: #f7f9fc;
+    color: #222;
+    line-height: 1.6;
+}
+/* 导航 */
+.nav {
+    background: #1f5f9e;
+    color: white;
+    padding: 1rem 1.5rem;
+    text-align: center;
+    font-size: 1.3rem;
+    font-weight: bold;
+}
+/* 容器 */
+.container {
+    max-width: 1000px;
+    margin: 2rem auto;
+    padding: 0 1rem;
+}
+/* 章节卡片 */
+.chapter-box {
+    background: white;
+    border-radius: 10px;
+    padding: 1.2rem;
+    margin-bottom: 1rem;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+}
+.chapter-title {
+    font-size: 1.15rem;
+    font-weight: bold;
+    color: #1f5f9e;
+    cursor: pointer;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+/* 小节内容 */
+.section-list {
+    margin-top: 0.8rem;
+    padding-left: 0.5rem;
+    display: none;
+}
+.section-item {
+    padding: 0.5rem 0;
+    border-bottom: 1px dashed #eee;
+}
+.section-item:last-child {
+    border-bottom: none;
+}
+.point {
+    color: #333;
+    padding-left: 0.8rem;
+    margin: 0.3rem 0;
+    font-size: 0.95rem;
+}
+/* 展开箭头 */
+.arrow {
+    font-size: 0.9rem;
+    transition: 0.2s;
+}
+.arrow.open {
+    transform: rotate(180deg);
+}
+</style>
 </head>
+
 <body>
-    <!-- 导航栏 -->
-    <nav>
-        <div class="logo">电路答疑君</div>
-        <div class="nav-links">
-            <a href="#home">首页</a>
-            <a href="#knowledge">知识点查询</a>
-            <a href="#question">章节题库</a>
-            <a href="#about">关于</a>
+<div class="nav">电路答疑君 · 邱关源《电路》第5版</div>
+
+<div class="container">
+
+<!-- 第1章 -->
+<div class="chapter-box">
+    <div class="chapter-title" onclick="toggle(this)">
+        第1章 电路模型和电路定律
+        <span class="arrow">▼</span>
+    </div>
+    <div class="section-list">
+        <div class="section-item">
+            <strong>1.1 电路与电路模型</strong>
+            <div class="point">• 实际电路与电路模型的区别</div>
+            <div class="point">• 理想电路元件：电阻、电感、电容、电源</div>
         </div>
-    </nav>
-
-    <div class="container">
-        <!-- 首页横幅 -->
-        <div class="hero" id="home">
-            <h1>电路答疑君</h1>
-            <p>电路理论课程专属学伴，帮你理清知识点、攻克重难点、轻松刷题备考</p>
+        <div class="section-item">
+            <strong>1.2 电压、电流、电位、电动势</strong>
+            <div class="point">• 电流的定义与参考方向</div>
+            <div class="point">• 电压与电位的关系</div>
+            <div class="point">• 关联参考方向与非关联参考方向</div>
         </div>
-
-        <!-- 知识点查询模块 -->
-        <div class="section" id="knowledge">
-            <h2>📚 章节知识点查询</h2>
-            <div class="chapter-list">
-                <div class="chapter-card">
-                    <h3>第1章 电路模型和电路定律</h3>
-                    <p>电路基本概念、KCL/KVL定律、欧姆定律</p>
-                </div>
-                <div class="chapter-card">
-                    <h3>第2章 电阻电路的等效变换</h3>
-                    <p>串并联等效、Y-Δ变换、电源等效变换</p>
-                </div>
-                <div class="chapter-card">
-                    <h3>第3章 线性电阻电路的一般分析</h3>
-                    <p>支路电流法、网孔电流法、节点电压法</p>
-                </div>
-                <div class="chapter-card">
-                    <h3>第4章 电路定理</h3>
-                    <p>叠加定理、戴维南/诺顿定理、最大功率传输</p>
-                </div>
-                <div class="chapter-card">
-                    <h3>第5章 含运算放大器的电路</h3>
-                    <p>理想运放特性、比例/加法/积分运算电路</p>
-                </div>
-                <div class="chapter-card">
-                    <h3>第6章 一阶电路和二阶电路的时域分析</h3>
-                    <p>三要素法、零输入/零状态响应、二阶电路响应</p>
-                </div>
-                <div class="chapter-card">
-                    <h3>第7章 正弦稳态电路的分析</h3>
-                    <p>相量法、阻抗/导纳、正弦稳态功率</p>
-                </div>
-                <div class="chapter-card">
-                    <h3>第8章 三相电路</h3>
-                    <p>对称三相电路、不对称三相电路、功率计算</p>
-                </div>
-            </div>
+        <div class="section-item">
+            <strong>1.3 欧姆定律</strong>
+            <div class="point">• 欧姆定律表达式 u = Ri</div>
+            <div class="point">• 线性电阻与非线性电阻</div>
         </div>
-
-        <!-- 章节题库模块 -->
-        <div class="section" id="question">
-            <h2>📝 章节题库</h2>
-            <div class="question-filter">
-                <select id="chapter-filter">
-                    <option value="all">全部章节</option>
-                    <option value="1">第1章 电路定律</option>
-                    <option value="2">第2章 等效变换</option>
-                    <option value="3">第3章 电路分析方法</option>
-                    <option value="4">第4章 电路定理</option>
-                </select>
-                <select id="type-filter">
-                    <option value="all">全部题型</option>
-                    <option value="choice">选择题</option>
-                    <option value="fill">填空题</option>
-                    <option value="calc">计算题</option>
-                </select>
-            </div>
-
-            <!-- 示例题目 -->
-            <div class="question-item" data-chapter="1" data-type="choice">
-                <h4>1. 下列关于KCL定律的说法，正确的是（）</h4>
-                <div class="question-options">
-                    <div class="option">A. 仅适用于线性电路</div>
-                    <div class="option">B. 仅适用于直流电路</div>
-                    <div class="option">C. 适用于任何集总参数电路</div>
-                    <div class="option">D. 不适用于含有受控源的电路</div>
-                </div>
-                <button class="answer-btn" onclick="toggleAnswer(this)">查看答案与解析</button>
-                <div class="answer-content">
-                    <p><strong>答案：C</strong></p>
-                    <p>解析：KCL（基尔霍夫电流定律）是电荷守恒定律在电路中的体现，适用于任何集总参数电路，与电路是否线性、是否直流、是否含受控源无关。</p>
-                </div>
-            </div>
-
-            <div class="question-item" data-chapter="4" data-type="calc">
-                <h4>2. 用戴维南定理求图示电路中负载电阻RL两端的电压（已知RL=4Ω，电路其他参数：电压源12V，内阻2Ω，串联电阻4Ω）</h4>
-                <button class="answer-btn" onclick="toggleAnswer(this)">查看答案与解析</button>
-                <div class="answer-content">
-                    <p><strong>解题步骤：</strong></p>
-                    <p>1. 断开RL，求开路电压Uoc：电路电流I=12V/(2Ω+4Ω)=2A，开路电压Uoc=2A×4Ω=8V</p>
-                    <p>2. 求等效内阻Req：电压源短路，Req=2Ω+4Ω=6Ω</p>
-                    <p>3. 戴维南等效电路：Uoc=8V，Req=6Ω，接RL=4Ω后，负载电压U=8V×(4Ω/(6Ω+4Ω))=3.2V</p>
-                    <p><strong>答案：3.2V</strong></p>
-                </div>
-            </div>
-        </div>
-
-        <!-- 关于模块 -->
-        <div class="section" id="about">
-            <h2>ℹ️ 关于电路答疑君</h2>
-            <p>电路答疑君是为《电路理论》课程打造的专属学伴平台，目前包含：</p>
-            <ul style="margin: 1rem 0 0 2rem;">
-                <li>按章节整理的核心知识点与公式</li>
-                <li>带详细解析的章节题库</li>
-                <li>后续将接入智能答疑功能，为你解答更多电路难题</li>
-            </ul>
+        <div class="section-item">
+            <strong>1.4 基尔霍夫定律 KCL / KVL</strong>
+            <div class="point">• KCL：结点电流之和为零</div>
+            <div class="point">• KVL：回路电压之和为零</div>
+            <div class="point">• 适用于任何集总参数电路</div>
         </div>
     </div>
+</div>
 
-    <!-- 页脚 -->
-    <footer>
-        <p>电路答疑君 © 2026 | 电路理论学习助手</p>
-    </footer>
+<!-- 第2章 -->
+<div class="chapter-box">
+    <div class="chapter-title" onclick="toggle(this)">
+        第2章 电阻电路的等效变换
+        <span class="arrow">▼</span>
+    </div>
+    <div class="section-list">
+        <div class="section-item">
+            <strong>2.1 电阻的串联与并联</strong>
+            <div class="point">• 串联：R = R1+R2+…</div>
+            <div class="point">• 并联：1/R = 1/R1+1/R2+…</div>
+        </div>
+        <div class="section-item">
+            <strong>2.2 电阻星形与三角形变换</strong>
+            <div class="point">• Y → Δ 变换公式</div>
+            <div class="point">• Δ → Y 变换公式</div>
+        </div>
+        <div class="section-item">
+            <strong>2.3 电源等效变换</strong>
+            <div class="point">• 电压源 ↔ 电流源互换</div>
+            <div class="point">• 理想电源不能互换</div>
+        </div>
+    </div>
+</div>
 
-    <script>
-        // 题目答案显示/隐藏
-        function toggleAnswer(btn) {
-            const answerDiv = btn.nextElementSibling;
-            if (answerDiv.style.display === "block") {
-                answerDiv.style.display = "none";
-                btn.textContent = "查看答案与解析";
-            } else {
-                answerDiv.style.display = "block";
-                btn.textContent = "隐藏答案与解析";
-            }
-        }
+<!-- 第3章 -->
+<div class="chapter-box">
+    <div class="chapter-title" onclick="toggle(this)">
+        第3章 线性电阻电路的一般分析
+        <span class="arrow">▼</span>
+    </div>
+    <div class="section-list">
+        <div class="section-item">
+            <strong>3.1 支路电流法</strong>
+            <div class="point">• 以支路电流为未知量</div>
+            <div class="point">• 列KCL、KVL方程</div>
+        </div>
+        <div class="section-item">
+            <strong>3.2 网孔电流法</strong>
+            <div class="point">• 网孔电流为未知量</div>
+            <div class="point">• 只列KVL方程</div>
+        </div>
+        <div class="section-item">
+            <strong>3.3 节点电压法</strong>
+            <div class="point">• 节点电压为未知量</div>
+            <div class="point">• 只列KCL方程</div>
+        </div>
+    </div>
+</div>
 
-        // 简单的题目筛选功能
-        document.getElementById('chapter-filter').addEventListener('change', filterQuestions);
-        document.getElementById('type-filter').addEventListener('change', filterQuestions);
+<!-- 第4章 -->
+<div class="chapter-box">
+    <div class="chapter-title" onclick="toggle(this)">
+        第4章 电路定理
+        <span class="arrow">▼</span>
+    </div>
+    <div class="section-list">
+        <div class="section-item">
+            <strong>4.1 叠加定理</strong>
+            <div class="point">• 多个电源分别作用再相加</div>
+            <div class="point">• 只适用于线性电路</div>
+            <div class="point">• 功率不能叠加</div>
+        </div>
+        <div class="section-item">
+            <strong>4.2 戴维南定理</strong>
+            <div class="point">• 任意一端口 → 电压源串联电阻</div>
+            <div class="point">• 求开路电压、等效电阻</div>
+        </div>
+        <div class="section-item">
+            <strong>4.3 诺顿定理</strong>
+            <div class="point">• 任意一端口 → 电流源并联电阻</div>
+        </div>
+        <div class="section-item">
+            <strong>4.4 最大功率传输定理</strong>
+            <div class="point">• RL = Req 时获得最大功率</div>
+        </div>
+    </div>
+</div>
 
-        function filterQuestions() {
-            const chapter = document.getElementById('chapter-filter').value;
-            const type = document.getElementById('type-filter').value;
-            const questions = document.querySelectorAll('.question-item');
+<!-- 第5章 -->
+<div class="chapter-box">
+    <div class="chapter-title" onclick="toggle(this)">
+        第5章 含有运算放大器的电路
+        <span class="arrow">▼</span>
+    </div>
+    <div class="section-list">
+        <div class="section-item">
+            <strong>5.1 理想运放特性</strong>
+            <div class="point">• 虚短：u+ = u−</div>
+            <div class="point">• 虚断：i+ = i− = 0</div>
+        </div>
+        <div class="section-item">
+            <strong>5.2 比例、加法、减法、积分电路</strong>
+            <div class="point">• 反相比例、同相比例</div>
+            <div class="point">• 积分电路与微分电路</div>
+        </div>
+    </div>
+</div>
 
-            questions.forEach(q => {
-                const qChapter = q.dataset.chapter;
-                const qType = q.dataset.type;
+<!-- 第6章 -->
+<div class="chapter-box">
+    <div class="chapter-title" onclick="toggle(this)">
+        第6章 一阶电路
+        <span class="arrow">▼</span>
+    </div>
+    <div class="section-list">
+        <div class="section-item">
+            <strong>6.1 动态元件</strong>
+            <div class="point">• 电容：i = C du/dt</div>
+            <div class="point">• 电感：u = L di/dt</div>
+        </div>
+        <div class="section-item">
+            <strong>6.2 初始值计算</strong>
+            <div class="point">• 换路定则 uC(0+)=uC(0−)</div>
+            <div class="point">• iL(0+)=iL(0−)</div>
+        </div>
+        <div class="section-item">
+            <strong>6.3 三要素法</strong>
+            <div class="point">• 初始值、稳态值、时间常数</div>
+            <div class="point">• f(t)=f(∞)+[f(0+)−f(∞)]e^(−t/τ)</div>
+        </div>
+    </div>
+</div>
 
-                const matchChapter = chapter === 'all' || qChapter === chapter;
-                const matchType = type === 'all' || qType === type;
+<!-- 第7章 -->
+<div class="chapter-box">
+    <div class="chapter-title" onclick="toggle(this)">
+        第7章 二阶电路
+        <span class="arrow">▼</span>
+    </div>
+    <div class="section-list">
+        <div class="section-item">
+            <strong>7.1 RLC串联电路</strong>
+            <div class="point">• 过阻尼、临界阻尼、欠阻尼</div>
+        </div>
+        <div class="section-item">
+            <strong>7.2 零输入响应与零状态响应</strong>
+        </div>
+        <div class="section-item">
+            <strong>7.3 冲激响应与阶跃响应</strong>
+        </div>
+    </div>
+</div>
 
-                q.style.display = (matchChapter && matchType) ? 'block' : 'none';
-            });
-        }
-    </script>
+<!-- 第8章 -->
+<div class="chapter-box">
+    <div class="chapter-title" onclick="toggle(this)">
+        第8章 相量法
+        <span class="arrow">▼</span>
+    </div>
+    <div class="section-list">
+        <div class="section-item">
+            <strong>8.1 正弦量三要素</strong>
+            <div class="point">• 振幅、角频率、初相位</div>
+            <div class="point">• 有效值 I = Im/√2</div>
+        </div>
+        <div class="section-item">
+            <strong>8.2 相量表示</strong>
+            <div class="point">• 电压相量、电流相量</div>
+            <div class="point">• 用复数表示正弦量</div>
+        </div>
+        <div class="section-item">
+            <strong>8.3 基尔霍夫定律相量形式</strong>
+            <div class="point">• KCL：∑I = 0</div>
+            <div class="point">• KVL：∑U = 0</div>
+        </div>
+    </div>
+</div>
+
+<!-- 第9章 -->
+<div class="chapter-box">
+    <div class="chapter-title" onclick="toggle(this)">
+        第9章 正弦稳态电路分析
+        <span class="arrow">▼</span>
+    </div>
+    <div class="section-list">
+        <div class="section-item">
+            <strong>9.1 阻抗与导纳</strong>
+            <div class="point">• R、L、C的阻抗</div>
+            <div class="point">• 串并联阻抗计算</div>
+        </div>
+        <div class="section-item">
+            <strong>9.2 正弦稳态功率</strong>
+            <div class="point">• 有功功率 P = UIcosφ</div>
+            <div class="point">• 无功功率 Q = UIsinφ</div>
+            <div class="point">• 视在功率 S = UI</div>
+            <div class="point">• 功率因数 λ = cosφ</div>
+        </div>
+        <div class="section-item">
+            <strong>9.3 复功率</strong>
+            <div class="point">• S̅ = P + jQ = Uİ*</div>
+        </div>
+    </div>
+</div>
+
+<!-- 第10章 -->
+<div class="chapter-box">
+    <div class="chapter-title" onclick="toggle(this)">
+        第10章 含有耦合电感的电路
+        <span class="arrow">▼</span>
+    </div>
+    <div class="section-list">
+        <div class="section-item">
+            <strong>10.1 互感与同名端</strong>
+            <div class="point">• 互感电压 u = M di/dt</div>
+            <div class="point">• 同名端判断方法</div>
+        </div>
+        <div class="section-item">
+            <strong>10.2 去耦等效</strong>
+            <div class="point">• 同侧并联、异侧并联</div>
+            <div class="point">• 顺向串联、反向串联</div>
+        </div>
+        <div class="section-item">
+            <strong>10.3 理想变压器</strong>
+            <div class="point">• u1/u2 = n</div>
+            <div class="point">• i1/i2 = −1/n</div>
+            <div class="point">• 阻抗变换 Zin = n²ZL</div>
+        </div>
+    </div>
+</div>
+
+<!-- 第11章 -->
+<div class="chapter-box">
+    <div class="chapter-title" onclick="toggle(this)">
+        第11章 电路的频率响应
+        <span class="arrow">▼</span>
+    </div>
+    <div class="section-list">
+        <div class="section-item">
+            <strong>11.1 网络函数</strong>
+        </div>
+        <div class="section-item">
+            <strong>11.2 RLC串联谐振</strong>
+            <div class="point">• 谐振条件 ω0=1/√(LC)</div>
+            <div class="point">• 品质因数 Q</div>
+            <div class="point">• 通频带 BW</div>
+        </div>
+        <div class="section-item">
+            <strong>11.3 滤波器</strong>
+            <div class="point">• 低通、高通、带通、带阻</div>
+        </div>
+    </div>
+</div>
+
+<!-- 第12章 -->
+<div class="chapter-box">
+    <div class="chapter-title" onclick="toggle(this)">
+        第12章 三相电路
+        <span class="arrow">▼</span>
+    </div>
+    <div class="section-list">
+        <div class="section-item">
+            <strong>12.1 对称三相电源</strong>
+            <div class="point">• 星形连接、三角形连接</div>
+            <div class="point">• 线电压与相电压关系</div>
+            <div class="point">• 线电流与相电流关系</div>
+        </div>
+        <div class="section-item">
+            <strong>12.2 对称三相电路计算</strong>
+            <div class="point">• 化为一相计算</div>
+        </div>
+        <div class="section-item">
+            <strong>12.3 三相功率</strong>
+            <div class="point">• 总功率 P = √3 UIcosφ</div>
+            <div class="point">• 二瓦计法测功率</div>
+        </div>
+    </div>
+</div>
+
+</div>
+
+<script>
+// 点击展开/收起章节
+function toggle(el) {
+    const list = el.nextElementSibling;
+    const arrow = el.querySelector('.arrow');
+    
+    if (list.style.display === 'block') {
+        list.style.display = 'none';
+        arrow.classList.remove('open');
+    } else {
+        list.style.display = 'block';
+        arrow.classList.add('open');
+    }
+}
+</script>
 </body>
 </html>
