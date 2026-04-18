@@ -3,98 +3,338 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>电路答疑君</title>
+    <title>电路答疑君 - 电路理论学伴</title>
     <style>
-        /* 1. 悬浮按钮：永远在最前面，不会被遮挡 */
-        #ai-btn {
-            position: fixed;
-            bottom: 20px;
-            right: 20px;
-            width: 60px;
-            height: 60px;
-            background: #007aff;
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: "Microsoft YaHei", sans-serif;
+        }
+
+        body {
+            background-color: #f5f7fa;
+            color: #333;
+            line-height: 1.6;
+        }
+
+        /* 导航栏 */
+        nav {
+            background-color: #2c3e50;
             color: white;
-            font-size: 26px;
-            border-radius: 50%;
-            border: none;
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: bold;
+        }
+
+        .nav-links a {
+            color: white;
+            text-decoration: none;
+            margin-left: 2rem;
+            transition: color 0.3s;
+        }
+
+        .nav-links a:hover {
+            color: #3498db;
+        }
+
+        /* 主容器 */
+        .container {
+            max-width: 1200px;
+            margin: 2rem auto;
+            padding: 0 2rem;
+        }
+
+        /* 首页横幅 */
+        .hero {
+            background: linear-gradient(135deg, #3498db, #2980b9);
+            color: white;
+            padding: 3rem;
+            border-radius: 10px;
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+
+        .hero h1 {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+        }
+
+        /* 功能模块 */
+        .section {
+            background: white;
+            border-radius: 10px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        }
+
+        .section h2 {
+            color: #2c3e50;
+            margin-bottom: 1.5rem;
+            border-left: 4px solid #3498db;
+            padding-left: 1rem;
+        }
+
+        /* 知识点章节列表 */
+        .chapter-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 1rem;
+        }
+
+        .chapter-card {
+            background: #f8f9fa;
+            padding: 1.5rem;
+            border-radius: 8px;
+            border-left: 4px solid #3498db;
             cursor: pointer;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
-            z-index: 9999; /* 最高层级 */
+            transition: all 0.3s;
         }
 
-        /* 2. 聊天窗口：默认隐藏，上移到按钮上方 */
-        #ai-window {
-            position: fixed;
-            bottom: 100px !important; /* 强制上移，离底部100px，避开按钮 */
-            right: 20px;
-            width: 380px;
-            height: 600px;
-            border-radius: 15px;
-            box-shadow: 0 5px 20px rgba(0,0,0,0.2);
-            display: none; /* 默认不显示 */
-            z-index: 9998; /* 层级比按钮低 */
-            overflow: hidden;
+        .chapter-card:hover {
+            background: #e9ecef;
+            transform: translateY(-3px);
         }
 
-        /* 3. 里面的iframe，跟着父容器一起移动 */
-        #ai-window iframe {
-            width: 100%;
-            height: 100%;
+        .chapter-card h3 {
+            color: #2c3e50;
+            margin-bottom: 0.5rem;
+        }
+
+        /* 题库模块 */
+        .question-filter {
+            margin-bottom: 1.5rem;
+        }
+
+        .question-filter select {
+            padding: 0.5rem 1rem;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            margin-right: 1rem;
+        }
+
+        .question-item {
+            background: #f8f9fa;
+            padding: 1.5rem;
+            border-radius: 8px;
+            margin-bottom: 1rem;
+        }
+
+        .question-item h4 {
+            margin-bottom: 0.5rem;
+        }
+
+        .question-options {
+            margin: 1rem 0;
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 0.5rem;
+        }
+
+        .option {
+            padding: 0.5rem;
+            background: white;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+
+        .answer-btn {
+            background: #3498db;
+            color: white;
             border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-top: 0.5rem;
+        }
+
+        .answer-btn:hover {
+            background: #2980b9;
+        }
+
+        .answer-content {
+            margin-top: 1rem;
+            padding: 1rem;
+            background: #e8f4fc;
+            border-radius: 5px;
+            display: none;
+        }
+
+        /* 页脚 */
+        footer {
+            background-color: #2c3e50;
+            color: white;
+            text-align: center;
+            padding: 1.5rem;
+            margin-top: 3rem;
         }
     </style>
 </head>
 <body>
+    <!-- 导航栏 -->
+    <nav>
+        <div class="logo">电路答疑君</div>
+        <div class="nav-links">
+            <a href="#home">首页</a>
+            <a href="#knowledge">知识点查询</a>
+            <a href="#question">章节题库</a>
+            <a href="#about">关于</a>
+        </div>
+    </nav>
 
-    <h1>电路答疑君</h1>
-    <p>一个为你量身定做的<br>《电路理论》在线学习助手</p>
+    <div class="container">
+        <!-- 首页横幅 -->
+        <div class="hero" id="home">
+            <h1>电路答疑君</h1>
+            <p>电路理论课程专属学伴，帮你理清知识点、攻克重难点、轻松刷题备考</p>
+        </div>
 
-    <h2>试验的图片</h2>
-    <img src="https://picsum.photos/300" alt="风景">
+        <!-- 知识点查询模块 -->
+        <div class="section" id="knowledge">
+            <h2>📚 章节知识点查询</h2>
+            <div class="chapter-list">
+                <div class="chapter-card">
+                    <h3>第1章 电路模型和电路定律</h3>
+                    <p>电路基本概念、KCL/KVL定律、欧姆定律</p>
+                </div>
+                <div class="chapter-card">
+                    <h3>第2章 电阻电路的等效变换</h3>
+                    <p>串并联等效、Y-Δ变换、电源等效变换</p>
+                </div>
+                <div class="chapter-card">
+                    <h3>第3章 线性电阻电路的一般分析</h3>
+                    <p>支路电流法、网孔电流法、节点电压法</p>
+                </div>
+                <div class="chapter-card">
+                    <h3>第4章 电路定理</h3>
+                    <p>叠加定理、戴维南/诺顿定理、最大功率传输</p>
+                </div>
+                <div class="chapter-card">
+                    <h3>第5章 含运算放大器的电路</h3>
+                    <p>理想运放特性、比例/加法/积分运算电路</p>
+                </div>
+                <div class="chapter-card">
+                    <h3>第6章 一阶电路和二阶电路的时域分析</h3>
+                    <p>三要素法、零输入/零状态响应、二阶电路响应</p>
+                </div>
+                <div class="chapter-card">
+                    <h3>第7章 正弦稳态电路的分析</h3>
+                    <p>相量法、阻抗/导纳、正弦稳态功率</p>
+                </div>
+                <div class="chapter-card">
+                    <h3>第8章 三相电路</h3>
+                    <p>对称三相电路、不对称三相电路、功率计算</p>
+                </div>
+            </div>
+        </div>
 
-    <h2>试验的链接</h2>
-    <a href="https://www.bucea.edu.cn/">参观一下母校？</a>
+        <!-- 章节题库模块 -->
+        <div class="section" id="question">
+            <h2>📝 章节题库</h2>
+            <div class="question-filter">
+                <select id="chapter-filter">
+                    <option value="all">全部章节</option>
+                    <option value="1">第1章 电路定律</option>
+                    <option value="2">第2章 等效变换</option>
+                    <option value="3">第3章 电路分析方法</option>
+                    <option value="4">第4章 电路定理</option>
+                </select>
+                <select id="type-filter">
+                    <option value="all">全部题型</option>
+                    <option value="choice">选择题</option>
+                    <option value="fill">填空题</option>
+                    <option value="calc">计算题</option>
+                </select>
+            </div>
 
-    <p>我是文字 <span>我是一小段特殊文字</span></p>
+            <!-- 示例题目 -->
+            <div class="question-item" data-chapter="1" data-type="choice">
+                <h4>1. 下列关于KCL定律的说法，正确的是（）</h4>
+                <div class="question-options">
+                    <div class="option">A. 仅适用于线性电路</div>
+                    <div class="option">B. 仅适用于直流电路</div>
+                    <div class="option">C. 适用于任何集总参数电路</div>
+                    <div class="option">D. 不适用于含有受控源的电路</div>
+                </div>
+                <button class="answer-btn" onclick="toggleAnswer(this)">查看答案与解析</button>
+                <div class="answer-content">
+                    <p><strong>答案：C</strong></p>
+                    <p>解析：KCL（基尔霍夫电流定律）是电荷守恒定律在电路中的体现，适用于任何集总参数电路，与电路是否线性、是否直流、是否含受控源无关。</p>
+                </div>
+            </div>
 
-    <h2>暂时的目录</h2>
-    <ul>
-        <li>第一章</li>
-        <li>第二章</li>   
-        <li>第三章</li>
-        <li>…………</li>
-    </ul>
+            <div class="question-item" data-chapter="4" data-type="calc">
+                <h4>2. 用戴维南定理求图示电路中负载电阻RL两端的电压（已知RL=4Ω，电路其他参数：电压源12V，内阻2Ω，串联电阻4Ω）</h4>
+                <button class="answer-btn" onclick="toggleAnswer(this)">查看答案与解析</button>
+                <div class="answer-content">
+                    <p><strong>解题步骤：</strong></p>
+                    <p>1. 断开RL，求开路电压Uoc：电路电流I=12V/(2Ω+4Ω)=2A，开路电压Uoc=2A×4Ω=8V</p>
+                    <p>2. 求等效内阻Req：电压源短路，Req=2Ω+4Ω=6Ω</p>
+                    <p>3. 戴维南等效电路：Uoc=8V，Req=6Ω，接RL=4Ω后，负载电压U=8V×(4Ω/(6Ω+4Ω))=3.2V</p>
+                    <p><strong>答案：3.2V</strong></p>
+                </div>
+            </div>
+        </div>
 
-    <button>我是（暂时不能用的）搜索按钮</button>
-    <input type="text" placeholder="输入点什么...">
-
-    <!-- 悬浮按钮 -->
-    <button id="ai-btn">💬</button>
-
-    <!-- 聊天窗口（默认隐藏，上移到按钮上方） -->
-    <div id="ai-window">
-        <iframe 
-            src="https://www.coze.cn/store/agent/7562589144795611151?bot_id=true" 
-            allow="clipboard-read; clipboard-write"
-        ></iframe>
+        <!-- 关于模块 -->
+        <div class="section" id="about">
+            <h2>ℹ️ 关于电路答疑君</h2>
+            <p>电路答疑君是为《电路理论》课程打造的专属学伴平台，目前包含：</p>
+            <ul style="margin: 1rem 0 0 2rem;">
+                <li>按章节整理的核心知识点与公式</li>
+                <li>带详细解析的章节题库</li>
+                <li>后续将接入智能答疑功能，为你解答更多电路难题</li>
+            </ul>
+        </div>
     </div>
 
+    <!-- 页脚 -->
+    <footer>
+        <p>电路答疑君 © 2026 | 电路理论学习助手</p>
+    </footer>
+
     <script>
-        const btn = document.getElementById('ai-btn');
-        const win = document.getElementById('ai-window');
-
-        btn.addEventListener('click', () => {
-            if (win.style.display === 'block') {
-                // 收起窗口
-                win.style.display = 'none';
-                btn.textContent = '💬';
+        // 题目答案显示/隐藏
+        function toggleAnswer(btn) {
+            const answerDiv = btn.nextElementSibling;
+            if (answerDiv.style.display === "block") {
+                answerDiv.style.display = "none";
+                btn.textContent = "查看答案与解析";
             } else {
-                // 展开窗口
-                win.style.display = 'block';
-                btn.textContent = '✕';
+                answerDiv.style.display = "block";
+                btn.textContent = "隐藏答案与解析";
             }
-        });
-    </script>
+        }
 
+        // 简单的题目筛选功能
+        document.getElementById('chapter-filter').addEventListener('change', filterQuestions);
+        document.getElementById('type-filter').addEventListener('change', filterQuestions);
+
+        function filterQuestions() {
+            const chapter = document.getElementById('chapter-filter').value;
+            const type = document.getElementById('type-filter').value;
+            const questions = document.querySelectorAll('.question-item');
+
+            questions.forEach(q => {
+                const qChapter = q.dataset.chapter;
+                const qType = q.dataset.type;
+
+                const matchChapter = chapter === 'all' || qChapter === chapter;
+                const matchType = type === 'all' || qType === type;
+
+                q.style.display = (matchChapter && matchType) ? 'block' : 'none';
+            });
+        }
+    </script>
 </body>
 </html>
