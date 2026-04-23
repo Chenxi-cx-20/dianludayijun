@@ -2,269 +2,42 @@
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>电路答疑君 - 电路理论学伴 | 章节知识 + 习题测验</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>电路答疑君 - 电路理论学伴 | AI智能体 + 习题测验</title>
+    <!-- 引入 MathJax 用于渲染公式 -->
     <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: "Microsoft YaHei", sans-serif;
-        }
-        body {
-            background: #f5f7fa;
-            line-height: 1.8;
-        }
-        nav {
-            background: #2c3e50;
-            color: white;
-            padding: 1rem 2rem;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            position: sticky;
-            top: 0;
-            z-index: 10;
-        }
-        .nav-links span {
-            color: white;
-            margin-left: 2rem;
-            cursor: pointer;
-            font-weight: 500;
-            transition: opacity 0.2s;
-        }
-        .nav-links span:hover {
-            opacity: 0.8;
-            text-decoration: underline;
-        }
-        .nav-links .active-mode {
-            border-bottom: 2px solid #f39c12;
-            padding-bottom: 4px;
-        }
-        .container {
-            max-width: 1200px;
-            margin: 2rem auto;
-            padding: 0 2rem;
-        }
-        /* 首页(章节列表页) + 章节内容页面 */
-        #homePage { display: block; }
-        .chapterPage {
-            display: none;
-            background: white;
-            padding: 2.5rem;
-            border-radius: 12px;
-            box-shadow: 0 2px 12px rgba(0,0,0,0.06);
-        }
-        /* 习题测验整体容器 */
-        .quizPage {
-            display: none;
-            background: white;
-            padding: 2rem;
-            border-radius: 12px;
-            box-shadow: 0 2px 12px rgba(0,0,0,0.06);
-        }
-        .hero {
-            background: linear-gradient(135deg, #3498db, #2980b9);
-            color: white;
-            padding: 3rem;
-            border-radius: 12px;
-            text-align: center;
-            margin-bottom: 2rem;
-        }
-        .chapter-list {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
-            gap: 1rem;
-        }
-        .chapter-card {
-            background: white;
-            padding: 1.5rem;
-            border-radius: 10px;
-            border-left: 5px solid #3498db;
-            cursor: pointer;
-            box-shadow: 0 1px 5px rgba(0,0,0,0.05);
-            transition: transform 0.1s ease;
-        }
-        .chapter-card:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-        }
-        .backBtn {
-            color: #3498db;
-            cursor: pointer;
-            margin-bottom: 1rem;
-            display: inline-block;
-            font-size: 1rem;
-        }
-        .chapterPage h2 {
-            border-left: 5px solid #3498db;
-            padding: 0.5rem 1rem;
-            margin: 2rem 0 1rem 0;
-            color: #2c3e50;
-            font-size: 1.4rem;
-        }
-        .chapterPage h3 {
-            margin: 1.5rem 0 0.8rem 0;
-            font-size: 1.15rem;
-            color: #2c3e50;
-        }
-        .text {
-            margin: 0.8rem 0;
-            line-height: 1.9;
-        }
-        footer {
-            background: #2c3e50;
-            color: white;
-            text-align: center;
-            padding: 1.5rem;
-            margin-top: 2rem;
-        }
+    <!-- Coze 智能体 SDK -->
+    <script src="https://lf-cdn.coze.cn/obj/unpkg/flow-platform/chat-app-sdk/1.2.0-beta.19/libs/cn/index.js"></script>
+    <!-- 外部 CSS 文件 -->
+    <link rel="stylesheet" href="style.css">
+    <!-- 加载 KaTeX 渲染引擎（自动识别 $...$ 和 \(...\) 格式） -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.18/dist/katex.min.css">
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.18/dist/katex.min.js"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.18/dist/contrib/auto-render.min.js" onload="renderMathInElement(document.body);"></script>
 
-        /* ----- 习题测验模块专用样式 ----- */
-        .quiz-header {
-            background: #ecf0f1;
-            padding: 1.5rem;
-            border-radius: 12px;
-            margin-bottom: 2rem;
-            text-align: center;
-        }
-        .quiz-header h2 {
-            color: #2c3e50;
-            margin-bottom: 0.5rem;
-        }
-        .quiz-header p {
-            color: #7f8c8d;
-        }
-        .question-card {
-            background: #fff;
-            border: 1px solid #e0e7ef;
-            border-radius: 16px;
-            padding: 1.5rem;
-            margin-bottom: 2rem;
-            box-shadow: 0 2px 6px rgba(0,0,0,0.03);
-            transition: all 0.2s;
-        }
-        .question-title {
-            font-size: 1.25rem;
-            font-weight: 600;
-            color: #2c3e50;
-            margin-bottom: 0.75rem;
-            display: flex;
-            align-items: center;
-            gap: 0.75rem;
-        }
-        .question-badge {
-            background: #3498db;
-            color: white;
-            font-size: 0.8rem;
-            padding: 0.2rem 0.8rem;
-            border-radius: 20px;
-        }
-        .question-text {
-            font-size: 1rem;
-            margin: 0.8rem 0 1.2rem 0;
-            padding-left: 0.5rem;
-            border-left: 3px solid #3498db;
-            background: #f9fafc;
-            padding: 1rem;
-            border-radius: 12px;
-        }
-        .options {
-            list-style: none;
-            margin: 1rem 0 0.5rem 0;
-        }
-        .options li {
-            margin: 0.8rem 0;
-            padding: 0.6rem 1rem;
-            background: #f8f9fa;
-            border-radius: 40px;
-            cursor: pointer;
-            transition: background 0.2s;
-            border: 1px solid #e2e8f0;
-        }
-        .options li:hover {
-            background: #e9ecef;
-        }
-        .option-selected {
-            background: #d4e6f1 !important;
-            border-left: 4px solid #2980b9 !important;
-            font-weight: 500;
-        }
-        .feedback {
-            margin-top: 1rem;
-            padding: 0.8rem 1rem;
-            border-radius: 12px;
-            font-size: 0.95rem;
-            display: none;
-        }
-        .feedback.correct {
-            background: #e0f7e8;
-            color: #1e7b48;
-            display: block;
-            border-left: 4px solid #2ecc71;
-        }
-        .feedback.wrong {
-            background: #fee2e2;
-            color: #c0392b;
-            display: block;
-            border-left: 4px solid #e74c3c;
-        }
-        .quiz-actions {
-            display: flex;
-            gap: 1rem;
-            justify-content: center;
-            margin: 2rem 0 1rem;
-        }
-        .quiz-btn {
-            background: #3498db;
-            border: none;
-            color: white;
-            padding: 0.7rem 1.8rem;
-            border-radius: 40px;
-            font-size: 1rem;
-            cursor: pointer;
-            transition: 0.2s;
-            font-weight: 500;
-        }
-        .quiz-btn.reset-btn {
-            background: #95a5a6;
-        }
-        .quiz-btn.reset-btn:hover {
-            background: #7f8c8d;
-        }
-        .quiz-btn:hover {
-            background: #2980b9;
-        }
-        .score-area {
-            text-align: center;
-            font-size: 1.2rem;
-            background: #fef9e6;
-            padding: 1rem;
-            border-radius: 40px;
-            margin-top: 1rem;
-            font-weight: bold;
-        }
-        hr {
-            margin: 1rem 0;
-        }
-        @media (max-width: 700px) {
-            .container {
-                padding: 0 1rem;
-            }
-            .chapter-list {
-                grid-template-columns: 1fr;
-            }
-        }
-    </style>
+    <script>
+    // 配置：让 $...$ 成为行内公式，$$...$$ 成为独占一行公式
+    document.addEventListener("DOMContentLoaded", function() {
+        renderMathInElement(document.body, {
+        delimiters: [
+            { left: "$$", right: "$$", display: true },
+            { left: "$", right: "$", display: false },
+            { left: "\\(", right: "\\)", display: false },
+            { left: "\\[", right: "\\]", display: true }
+        ],
+        throwOnError: false
+        });
+    });
+    </script>
 </head>
 <body>
 
 <nav>
-    <div>⚡ 电路答疑君</div>
+    <div class="logo">⚡ 电路答疑君 </div>
     <div class="nav-links">
-        <span id="navKnowledgeBtn" onclick="switchToKnowledge()">📘 章节知识</span>
-        <span id="navQuizBtn" onclick="switchToQuiz()">✍️ 习题测验</span>
+        <span id="navKnowledgeBtn">📘 章节知识</span>
+        <span id="navQuizBtn">✍️ 习题测验</span>
+        <span id="navAIBtn"></span>
     </div>
 </nav>
 
@@ -273,7 +46,7 @@
     <div id="homePage">
         <div class="hero">
             <h1>电路答疑君</h1>
-            <p>电路理论课程专属学习工具 | 邱关源《电路》第五版 | 章节知识 + 在线测验</p>
+            <p>电路理论课程专属学习工具 </p>
         </div>
         <div class="chapter-list">
             <div class="chapter-card" onclick="openChapter(1)">第1章 电路模型和电路定律</div>
@@ -298,24 +71,172 @@
     </div>
 
     <!-- 第1章 -->
+<!-- 第1章 -->
 <div class="chapterPage" id="ch1">
     <div class="backBtn" onclick="showHome()">← 返回首页</div>
     <h2>第一章 电路模型和电路定律</h2>
-    <div class="text">（内容占位）</div>
+
+    <h3>§1-1 电路和电路模型</h3>
+    <div class="text">实际电路：由实际元器件（如电阻、电池、灯泡）组成的电流通路，用于实现电能传输、信号处理等功能。</div>
+    <div class="text">电路模型：用抽象的理想元件（如理想电阻、理想电压源）代替实际元器件，形成的电路图。电路分析的对象是电路模型。</div>
+    <div class="text">集总参数电路：假设电路中的所有电磁过程都集中在元件内部发生，元件之间的连接线上没有电场和磁场。本书讨论的均为集总参数电路。</div>
+
+    <h3>§1-2 电流和电压的参考方向</h3>
+    <div class="text">参考方向：一个预先假定的方向，用于将电流、电压等物理量表示为代数量，从而处理实际方向未知或随时间变化的情况。</div>
+    <div class="text">电流参考方向：用箭头表示。若实际电流方向与参考方向一致，电流值 \(i>0\)；反之 \(i<0\)。单位：安培（A）。</div>
+    <div class="text">电压参考方向：用“+”和“-”表示，规定“+”端指向“-”端为参考方向。若实际电压降方向与参考方向一致，电压值 \(u>0\)；反之 \(u<0\)。单位：伏特（V）。</div>
+    <div class="text">关联参考方向：电流的参考方向从电压的“+”端流入，从“-”端流出。</div>
+    <div class="text">公式：在此方向下，元件吸收的功率为 \(p = ui\)。</div>
+    <div class="text">非关联参考方向：电流的参考方向与电压参考方向相反。</div>
+    <div class="text">公式：在此方向下，元件发出的功率为 \(p = ui\)。</div>
+
+    <h3>§1-3 电功率和能量</h3>
+    <div class="text">功率 (Power)：能量变化的速率。</div>
+    <div class="text">定义：\[p = \frac{dW}{dt}\]</div>
+    <div class="text">计算：\[p = ui\]（单位：瓦特，W）</div>
+    <div class="text">物理意义：在关联参考方向下，若 \(p>0\)，表示元件吸收功率（消耗或储存能量）；若 \(p<0\)，表示元件发出功率（提供能量）。</div>
+    <div class="text">能量 (Energy)：功率对时间的积分。</div>
+    <div class="text">计算：\[W = \int_{t_0}^{t} u(\xi) i(\xi) d\xi\]（单位：焦耳，J）</div>
+    <div class="text">表示从 \(t_0\) 到 \(t\) 时间内元件吸收或释放的总能量。</div>
+
+    <h3>§1-4 电路元件</h3>
+    <div class="text">集总参数元件：理想元件，其端子电流和电压是单值函数，是构成电路模型的基本单元。</div>
+
+    <h3>§1-5 电阻元件</h3>
+    <div class="text">线性电阻：服从欧姆定律的理想元件，符号为 \(R\)。</div>
+    <div class="text">欧姆定律：在关联参考方向下，\[u = Ri\]。在非关联参考方向下，\[u = -Ri\]。</div>
+    <div class="text">电导 (Conductance)：\[G = \frac{1}{R}\]，单位西门子（S），\[i = Gu\]。</div>
+    <div class="text">伏安特性：\(u-i\) 平面上的关系曲线。线性电阻的伏安特性是一条过原点的直线。</div>
+    <div class="text">开路：\(R \to \infty\)，无论 \(i\) 为何值，\(u=0\)。</div>
+    <div class="text">短路：\(R = 0\)，无论 \(u\) 为何值，\(i=0\)。</div>
+    <div class="text">功率：电阻是耗能元件。</div>
+    <div class="text">计算：\[p = ui = i^2 R = \frac{u^2}{R} \ge 0\]（在关联参考方向下）</div>
+
+    <h3>§1-6 电压源和电流源</h3>
+    <div class="text">独立电压源：两端电压 \(u_s(t)\) 是确定的时间函数，与流过它的电流 \(i\) 无关。电流 \(i\) 由外电路决定。</div>
+    <div class="text">特性：若 \(u_s=0\)，相当于短路。</div>
+    <div class="text">独立电流源：输出电流 \(i_s(t)\) 是确定的时间函数，与它两端的电压 \(u\) 无关。电压 \(u\) 由外电路决定。</div>
+    <div class="text">特性：若 \(i_s=0\)，相当于开路。</div>
+    <div class="text">正弦电源：电压或电流随时间按正弦规律变化。</div>
+    <div class="text">表达式：\[u_s(t) = U_m \cos(\omega t + \phi)\]，其中 \(U_m\) 为振幅，\(\omega\) 为角频率，\(\phi\) 为初相。</div>
+
+    <h3>§1-7 受控电源</h3>
+    <div class="text">定义：电压源或电流源的输出量受电路中另一支路的电压或电流控制。用于建模晶体管等有源器件。</div>
+    <div class="text">四种类型：</div>
+    <div class="text">1. 电压控制电压源 (VCVS)：\[u_2 = \mu u_1\]（\(\mu\) 无量纲）</div>
+    <div class="text">2. 电压控制电流源 (VCCS)：\[i_2 = g u_1\]（\(g\) 为转移电导，单位 S）</div>
+    <div class="text">3. 电流控制电压源 (CCVS)：\[u_2 = r i_1\]（\(r\) 为转移电阻，单位 \(\Omega\)）</div>
+    <div class="text">4. 电流控制电流源 (CCCS)：\[i_2 = \beta i_1\]（\(\beta\) 无量纲）</div>
+
+    <h3>§1-8 基尔霍夫定律</h3>
+    <div class="text">基尔霍夫电流定律 (KCL)：对任一结点（或闭合面），\[\sum i = 0\]。</div>
+    <div class="text">解释：流入结点的电流之和等于流出结点的电流之和。本质是电荷守恒。</div>
+    <div class="text">基尔霍夫电压定律 (KVL)：对任一回路，\[\sum u = 0\]。</div>
+    <div class="text">解释：沿回路绕行一周，电压降的代数和为零。本质是能量守恒（电场力做功与路径无关）。</div>
 </div>
 
 <!-- 第2章 -->
 <div class="chapterPage" id="ch2">
     <div class="backBtn" onclick="showHome()">← 返回首页</div>
     <h2>第二章 电阻电路的等效变换</h2>
-    <div class="text">（内容占位）</div>
+
+    <h3>§2-1 引言</h3>
+    <div class="text">等效变换：用一种更简单的电路结构替代原电路中的一部分，使得未被替代部分的电压和电流保持不变。核心是对外等效。</div>
+
+    <h3>§2-2 电阻的串联</h3>
+    <div class="text">特点：流过同一电流 \(i\)。</div>
+    <div class="text">等效电阻：\[R_{eq} = R_1 + R_2 + \dots + R_n\]</div>
+    <div class="text">解释：等效电阻大于任一个串联电阻。</div>
+    <div class="text">分压公式：\[u_k = \frac{R_k}{R_{eq}} u\]</div>
+    <div class="text">解释：电阻越大，分得的电压越高。</div>
+
+    <h3>§2-3 电阻的并联</h3>
+    <div class="text">特点：两端电压相同 \(u\)。</div>
+    <div class="text">等效电导：\[G_{eq} = G_1 + G_2 + \dots + G_n\]</div>
+    <div class="text">等效电阻：\[\frac{1}{R_{eq}} = \frac{1}{R_1} + \frac{1}{R_2} + \dots + \frac{1}{R_n}\]</div>
+    <div class="text">解释：等效电阻小于任一个并联电阻。</div>
+    <div class="text">分流公式：\[i_k = \frac{G_k}{G_{eq}} i\]</div>
+    <div class="text">两电阻特例：\[i_1 = \frac{R_2}{R_1+R_2} i,\quad i_2 = \frac{R_1}{R_1+R_2} i\]。</div>
+    <div class="text">解释：电阻越小（电导越大），分得的电流越大。</div>
+
+    <h3>§2-4 电阻的Y-Δ等效变换</h3>
+    <div class="text">Y形（星形）与Δ形（三角形）：三端电阻网络的两种常见连接方式。</div>
+    <div class="text">Δ→Y 变换：</div>
+    <div class="text">\[R_1 = \frac{R_{12}R_{31}}{R_{12}+R_{23}+R_{31}}\]</div>
+    <div class="text">解释：分子是“相邻两电阻乘积”，分母是“三电阻之和”。</div>
+    <div class="text">Y→Δ 变换：</div>
+    <div class="text">\[R_{12} = R_1 + R_2 + \frac{R_1R_2}{R_3}\]</div>
+    <div class="text">解释：分子是“电阻两两乘积之和”，分母是“对面电阻”。</div>
+    <div class="text">对称网络：若 \(R_Y = R_1 = R_2 = R_3\)，则 \(R_\Delta = 3R_Y\)。</div>
+
+    <h3>§2-5 实际电源的两种模型及其等效变换</h3>
+    <div class="text">实际电压源模型：理想电压源 \(U_s\) 与内阻 \(R\) 串联。</div>
+    <div class="text">实际电流源模型：理想电流源 \(I_s\) 与内阻 \(R\) 并联。</div>
+    <div class="text">等效变换条件：</div>
+    <div class="text">\[I_s = \frac{U_s}{R}\quad \text{或} \quad U_s = I_s R\]，且内阻值不变（\(R\) 不变）。</div>
+    <div class="text">注意事项：\(I_s\) 的参考方向必须由 \(U_s\) 的负极指向正极。</div>
+
+    <h3>§2-6 输入电阻</h3>
+    <div class="text">一端口：只有两个端子与外电路连接的电路。</div>
+    <div class="text">输入电阻 \(R_i\)：端口电压 \(u\) 与端口电流 \(i\) 之比。</div>
+    <div class="text">定义：\[R_i = \frac{u}{i}\]</div>
+    <div class="text">物理意义：对于不含独立源的一端口，输入电阻等于其等效电阻。</div>
+    <div class="text">计算方法：在端口施加电压源 \(u_s\)，计算端口电流 \(i\)，则 \(R_i = u_s/i\)（或施加电流源求电压）。</div>
 </div>
 
 <!-- 第3章 -->
 <div class="chapterPage" id="ch3">
     <div class="backBtn" onclick="showHome()">← 返回首页</div>
     <h2>第三章 线性电阻电路的一般分析</h2>
-    <div class="text">（内容占位）</div>
+
+    <h3>§3-1 电路的图</h3>
+    <div class="text">图 \(G\)：由结点和支路组成的几何图形，反映电路的连接关系。</div>
+    <div class="text">有向图：每条支路都赋予了参考方向的图。</div>
+
+    <h3>§3-2 KCL和KVL的独立方程数</h3>
+    <div class="text">独立KCL方程数：\(n-1\)（\(n\) 为结点数）。</div>
+    <div class="text">树 (Tree)：包含所有结点但不包含任何回路的连通子图。</div>
+    <div class="text">树支：树中的支路，数量为 \(n-1\)。</div>
+    <div class="text">连支：不在树中的支路，数量为 \(b - (n-1)\)（\(b\) 为支路数）。</div>
+    <div class="text">基本回路：只包含一条连支的回路，数量 = 连支数 = \(b - n + 1\)。</div>
+    <div class="text">独立KVL方程数：\(b - n + 1\)。</div>
+
+    <h3>§3-3 支路电流法</h3>
+    <div class="text">思路：以 \(b\) 个支路电流为未知量。</div>
+    <div class="text">方程：列写 \(n-1\) 个KCL方程 + \(b-n+1\) 个KVL方程。</div>
+    <div class="text">KVL方程形式：\[\sum R_k i_k = \sum u_{sk}\]。</div>
+    <div class="text">解释：沿回路，电阻电压的代数和等于电压源电压的代数和。</div>
+    <div class="text">局限性：处理无伴电流源（无并联电阻的电流源）较麻烦。</div>
+
+    <h3>§3-4 网孔电流法</h3>
+    <div class="text">适用：仅适用于平面电路。</div>
+    <div class="text">思路：以假想的沿网孔边界流动的电流 \(i_{m1}, i_{m2}, ...\) 为未知量（自动满足KCL）。</div>
+    <div class="text">方程：列写 \(b-n+1\) 个KVL方程。</div>
+    <div class="text">标准方程形式（以两个网孔为例）：</div>
+    <div class="text">\[R_{11}i_{m1} + R_{12}i_{m2} = u_{S11}\]</div>
+    <div class="text">\[R_{21}i_{m1} + R_{22}i_{m2} = u_{S22}\]</div>
+    <div class="text">参数解释：</div>
+    <div class="text">自阻 \(R_{ii}\)：第 \(i\) 个网孔中所有电阻之和，取正值。</div>
+    <div class="text">互阻 \(R_{ij}(i \ne j)\)：两网孔公共电阻之和。当两网孔电流在公共电阻上方向相反时，互阻取负值（常见情况）。</div>
+    <div class="text">\(u_{Sii}\)：第 \(i\) 个网孔中电压源电压的代数和。当电压源方向与网孔电流方向一致时，取负值。</div>
+
+    <h3>§3-5 回路电流法</h3>
+    <div class="text">适用：平面和非平面电路均可。</div>
+    <div class="text">思路：以一组独立回路（常选基本回路）的电流为未知量。</div>
+    <div class="text">与网孔法的区别：方程形式与网孔法完全一致，只是回路的选择更灵活。</div>
+    <div class="text">无伴电流源处理技巧：选择回路时，使该无伴电流源支路只属于一个回路，则该回路电流即为已知（等于电流源电流）。</div>
+
+    <h3>§3-6 结点电压法</h3>
+    <div class="text">思路：以独立结点相对于参考结点的电压 \(u_{n1}, u_{n2}, ...\) 为未知量（自动满足KVL）。</div>
+    <div class="text">方程：列写 \(n-1\) 个KCL方程。</div>
+    <div class="text">标准方程形式（以两个独立结点为例）：</div>
+    <div class="text">\[G_{11}u_{n1} + G_{12}u_{n2} = i_{S11}\]</div>
+    <div class="text">\[G_{21}u_{n1} + G_{22}u_{n2} = i_{S22}\]</div>
+    <div class="text">参数解释：</div>
+    <div class="text">自导 \(G_{ii}\)：连接到第 \(i\) 个结点的所有支路电导之和，取正值。</div>
+    <div class="text">互导 \(G_{ij}(i \ne j)\)：连接结点 \(i\) 和 \(j\) 的支路电导之和，取负值。</div>
+    <div class="text">\(i_{Sii}\)：流入第 \(i\) 个结点的电流源电流代数和（流入为正）。</div>
+    <div class="text">无伴电压源处理技巧：将无伴电压源的一端设为参考结点，则另一端的结点电压即为已知值。</div>
 </div>
 
 <!-- 第4章 电路定理 -->
@@ -934,264 +855,200 @@
     <div class="text">二瓦计法：适用于三相三线制，总功率 \(P=P_1+P_2\)</div>
 </div>
 
-<!-- ======================= 第13章 完整无删减内容 ======================= -->
+<!-- ======================= 第13章 完整无删减内容（添加换行优化） ======================= -->
 <div class="chapterPage" id="ch13">
     <div class="backBtn" onclick="showHome()">← 返回首页</div>
     <h2>第十三章 非正弦周期电流电路和信号的频谱</h2>
-    <div class="text">本章研究当激励信号不是正弦波时，线性电路的分析方法。核心思想是<strong>谐波分析法</strong>：将非正弦周期信号分解为一系列正弦波的叠加。</div>
-    
+    <div class="text">本章研究当激励信号不是正弦波时，线性电路的分析方法。<br>核心思想是<strong>谐波分析法</strong>：将非正弦周期信号分解为一系列正弦波的叠加。</div>
     <h3>§13-1 非正弦周期信号</h3>
-    <div class="text"><strong>什么是非正弦周期信号？</strong> 波形不是正弦曲线，但仍然按周期重复变化的信号。</div>
+    <div class="text"><strong>什么是非正弦周期信号？</strong><br>波形不是正弦曲线，但仍然按周期重复变化的信号。</div>
     <div class="text"><strong>常见例子</strong>：矩形波（方波）：数字电路中广泛使用；三角波：扫描电路；锯齿波：示波器扫描；全波整流波形：电源电路。</div>
-    <div class="text"><strong>为什么需要研究？</strong> 实际信号大多不是纯净的正弦波。即使电源是正弦的，电路中的非线性元件（如二极管、三极管）也会产生非正弦的电压和电流。通信、控制、计算机等领域大量使用非正弦信号（脉冲、方波等）。</div>
-    <div class="text"><strong>基本思路</strong>：将非正弦周期信号分解为一系列频率成整数倍的正弦波的叠加。分别计算每个正弦波单独作用下的响应（利用正弦稳态分析法）。将各响应叠加，得到总响应。</div>
-    
+    <div class="text"><strong>为什么需要研究？</strong><br>实际信号大多不是纯净的正弦波。<br>即使电源是正弦的，电路中的非线性元件（如二极管、三极管）也会产生非正弦的电压和电流。<br>通信、控制、计算机等领域大量使用非正弦信号（脉冲、方波等）。</div>
+    <div class="text"><strong>基本思路</strong>：将非正弦周期信号分解为一系列频率成整数倍的正弦波的叠加。<br>分别计算每个正弦波单独作用下的响应（利用正弦稳态分析法）。<br>将各响应叠加，得到总响应。</div>
     <h3>§13-2 非正弦周期函数分解为傅里叶级数</h3>
-    <div class="text"><strong>一、傅里叶级数的定义</strong> 任何一个满足狄里赫利条件的周期函数 \(f(t)\)（周期为 \(T\)，角频率 \(\omega_1 = 2\pi/T\)）都可以展开为傅里叶级数：</div>
+    <div class="text"><strong>一、傅里叶级数的定义</strong><br>任何一个满足狄里赫利条件的周期函数 \(f(t)\)（周期为 \(T\)，角频率 \(\omega_1 = 2\pi/T\)）都可以展开为傅里叶级数：</div>
     <div class="text">三角形式：\(f(t) = \frac{a_0}{2} + \sum_{k=1}^{\infty} [a_k \cos(k\omega_1 t) + b_k \sin(k\omega_1 t)]\)</div>
     <div class="text">余弦形式（更常用）：\(f(t) = \frac{A_0}{2} + \sum_{k=1}^{\infty} A_{km} \cos(k\omega_1 t + \phi_k)\)</div>
     <div class="text"><strong>二、各项的物理意义</strong></div>
-    <table>
-        <thead><tr><th>项</th><th>名称</th><th>角频率</th><th>物理意义</th></tr></thead>
-        <tbody><tr><td>\(\frac{A_0}{2}\)</td><td>直流分量（恒定分量）</td><td>0</td><td>信号的平均值</td></tr>
-        <tr><td>\(k=1\)</td><td>基波分量</td><td>\(\omega_1\)</td><td>与原信号同频率的主要成分</td></tr>
-        <tr><td>\(k=2,3,4,\dots\)</td><td>高次谐波</td><td>\(2\omega_1, 3\omega_1, 4\omega_1, \dots\)</td><td>整数倍频率的成分</td></tr></tbody>
-    </table>
+    <table><thead><tr><th>项</th><th>名称</th><th>角频率</th><th>物理意义</th></tr></thead><tbody><tr><td>\(\frac{A_0}{2}\)</td><td>直流分量（恒定分量）</td><td>0</td><td>信号的平均值</td></tr><tr><td>\(k=1\)</td><td>基波分量</td><td>\(\omega_1\)</td><td>与原信号同频率的主要成分</td></tr><tr><td>\(k=2,3,4,\dots\)</td><td>高次谐波</td><td>\(2\omega_1, 3\omega_1, 4\omega_1, \dots\)</td><td>整数倍频率的成分</td></tr></tbody></table>
     <div class="text">谐波次数越高，频率越高，波形细节越丰富。</div>
-    <div class="text"><strong>三、系数计算公式</strong> \(a_k = \frac{2}{T} \int_0^T f(t) \cos(k\omega_1 t) dt,\quad b_k = \frac{2}{T} \int_0^T f(t) \sin(k\omega_1 t) dt,\quad A_{km} = \sqrt{a_k^2 + b_k^2}, \quad \phi_k = \arctan\left(-\frac{b_k}{a_k}\right)\)。\(a_0 = \frac{2}{T} \int_0^T f(t) dt\)，是直流分量的两倍（所以直流分量为 \(a_0/2\)）。</div>
+    <div class="text"><strong>三、系数计算公式</strong><br>\(a_k = \frac{2}{T} \int_0^T f(t) \cos(k\omega_1 t) dt,\quad b_k = \frac{2}{T} \int_0^T f(t) \sin(k\omega_1 t) dt,\quad A_{km} = \sqrt{a_k^2 + b_k^2}, \quad \phi_k = \arctan\left(-\frac{b_k}{a_k}\right)\)。<br>\(a_0 = \frac{2}{T} \int_0^T f(t) dt\)，是直流分量的两倍（所以直流分量为 \(a_0/2\)）。</div>
     <div class="text"><strong>四、利用对称性简化计算</strong></div>
-    <table>
-        <thead><tr><th>对称性</th><th>条件</th><th>系数特征</th></tr></thead>
-        <tbody><tr><td>偶函数</td><td>\(f(t)=f(-t)\)</td><td>\(b_k=0\)，只有余弦项</td></tr>
-        <tr><td>奇函数</td><td>\(f(t)=-f(-t)\)</td><td>\(a_k=0\)，只有正弦项</td></tr>
-        <tr><td>奇谐波函数</td><td>\(f(t)=-f(t+T/2)\)</td><td>只有奇次谐波（\(k\)为奇数）</td></tr></tbody>
-    </table>
+    <table><thead><tr><th>对称性</th><th>条件</th><th>系数特征</th></tr></thead><tbody><tr><td>偶函数</td><td>\(f(t)=f(-t)\)</td><td>\(b_k=0\)，只有余弦项</td></tr><tr><td>奇函数</td><td>\(f(t)=-f(-t)\)</td><td>\(a_k=0\)，只有正弦项</td></tr><tr><td>奇谐波函数</td><td>\(f(t)=-f(t+T/2)\)</td><td>只有奇次谐波（\(k\)为奇数）</td></tr></tbody></table>
     <div class="text">技巧：合理选择计时起点（即坐标原点），可以简化傅里叶级数。</div>
-    <div class="text"><strong>五、典型波形的傅里叶级数</strong> 矩形波（方波，对称于原点）：\(f(t) = \frac{4E_m}{\pi} \left( \sin \omega_1 t + \frac{1}{3} \sin 3\omega_1 t + \frac{1}{5} \sin 5\omega_1 t + \cdots \right)\)。特点：只含奇次正弦谐波，谐波幅度与次数成反比衰减。</div>
-    
+    <div class="text"><strong>五、典型波形的傅里叶级数</strong><br>矩形波（方波，对称于原点）：\(f(t) = \frac{4E_m}{\pi} \left( \sin \omega_1 t + \frac{1}{3} \sin 3\omega_1 t + \frac{1}{5} \sin 5\omega_1 t + \cdots \right)\)。<br>特点：只含奇次正弦谐波，谐波幅度与次数成反比衰减。</div>
     <h3>§13-3 有效值、平均值和平均功率</h3>
-    <div class="text"><strong>一、有效值（均方根值）</strong> 对于非正弦周期电流 \(i(t) = I_0 + \sum_{k=1}^{\infty} I_{km} \cos(k\omega_1 t + \phi_k)\)：\(I = \sqrt{I_0^2 + I_1^2 + I_2^2 + I_3^2 + \cdots} = \sqrt{I_0^2 + \sum_{k=1}^{\infty} I_k^2}\)。核心结论：非正弦周期量的有效值等于直流分量和各次谐波有效值的平方和开根。注意：这里 \(I_k = I_{km}/\sqrt{2}\) 是各次谐波的有效值。</div>
-    <div class="text"><strong>二、平均值</strong> \(I_{av} = \frac{1}{T} \int_0^T |i(t)| dt\)。与有效值的区别：有效值是平方平均，平均值是绝对值的平均。正弦波：\(I_{av} = \frac{2\sqrt{2}}{\pi} I \approx 0.637 I\)，\(I = 1.11 I_{av}\)（波形因数）。</div>
-    <div class="text"><strong>三、平均功率（有功功率）</strong> \(P = U_0 I_0 + \sum_{k=1}^{\infty} U_k I_k \cos \phi_k\)。核心结论：不同频率的电压和电流不产生平均功率，只有同频率的电压和电流才贡献平均功率。解释：\(\int_0^T \cos(m\omega_1 t) \cos(n\omega_1 t) dt = 0\) 当 \(m \ne n\)。</div>
-    
+    <div class="text"><strong>一、有效值（均方根值）</strong><br>对于非正弦周期电流 \(i(t) = I_0 + \sum_{k=1}^{\infty} I_{km} \cos(k\omega_1 t + \phi_k)\)：<br>\(I = \sqrt{I_0^2 + I_1^2 + I_2^2 + I_3^2 + \cdots} = \sqrt{I_0^2 + \sum_{k=1}^{\infty} I_k^2}\)。<br>核心结论：非正弦周期量的有效值等于直流分量和各次谐波有效值的平方和开根。<br>注意：这里 \(I_k = I_{km}/\sqrt{2}\) 是各次谐波的有效值。</div>
+    <div class="text"><strong>二、平均值</strong><br>\(I_{av} = \frac{1}{T} \int_0^T |i(t)| dt\)。<br>与有效值的区别：有效值是平方平均，平均值是绝对值的平均。<br>正弦波：\(I_{av} = \frac{2\sqrt{2}}{\pi} I \approx 0.637 I\)，\(I = 1.11 I_{av}\)（波形因数）。</div>
+    <div class="text"><strong>三、平均功率（有功功率）</strong><br>\(P = U_0 I_0 + \sum_{k=1}^{\infty} U_k I_k \cos \phi_k\)。<br>核心结论：不同频率的电压和电流不产生平均功率，只有同频率的电压和电流才贡献平均功率。<br>解释：\(\int_0^T \cos(m\omega_1 t) \cos(n\omega_1 t) dt = 0\) 当 \(m \ne n\)。</div>
     <h3>§13-4 非正弦周期电流电路的计算——谐波分析法</h3>
-    <div class="text"><strong>计算步骤</strong>：1. 傅里叶分解：将非正弦周期激励分解为直流分量和各次谐波。2. 分别计算：直流分量：电容开路，电感短路，按直流电阻电路计算。各次谐波：用相量法计算。注意：感抗 \(X_L(k) = k\omega_1 L\)，容抗 \(X_C(k) = -1/(k\omega_1 C)\)，与谐波次数 \(k\) 有关。3. 叠加：将各分量计算结果在时域叠加（不能直接叠加相量，因为频率不同！）。正确做法：将各次谐波的瞬时表达式写出，然后相加。</div>
-    <div class="text"><strong>关键注意事项</strong>：谐振现象：对于某次谐波，电路可能发生谐振（如 \(k\omega_1 L = 1/(k\omega_1 C)\)），该次谐波响应会很大。收敛性：实际计算中只能取有限项。波形越光滑，级数收敛越快。功率计算：总功率等于各次谐波功率之和（包括直流）。</div>
-    
+    <div class="text"><strong>计算步骤</strong>：<br>1. 傅里叶分解：将非正弦周期激励分解为直流分量和各次谐波。<br>2. 分别计算：直流分量：电容开路，电感短路，按直流电阻电路计算。<br>各次谐波：用相量法计算。注意：感抗 \(X_L(k) = k\omega_1 L\)，容抗 \(X_C(k) = -1/(k\omega_1 C)\)，与谐波次数 \(k\) 有关。<br>3. 叠加：将各分量计算结果在时域叠加（不能直接叠加相量，因为频率不同！）。<br>正确做法：将各次谐波的瞬时表达式写出，然后相加。</div>
+    <div class="text"><strong>关键注意事项</strong>：<br>谐振现象：对于某次谐波，电路可能发生谐振（如 \(k\omega_1 L = 1/(k\omega_1 C)\)），该次谐波响应会很大。<br>收敛性：实际计算中只能取有限项。波形越光滑，级数收敛越快。<br>功率计算：总功率等于各次谐波功率之和（包括直流）。</div>
     <h3>§13-5 傅里叶级数的指数形式</h3>
-    <div class="text">利用欧拉公式 \(e^{j\theta} = \cos\theta + j\sin\theta\)，可将傅里叶级数写成：\(f(t) = \sum_{k=-\infty}^{\infty} c_k e^{jk\omega_1 t}\)，其中 \(c_k = \frac{1}{T} \int_0^T f(t) e^{-jk\omega_1 t} dt\)。特点：\(k\) 取正负整数，频谱对称（\(|c_{-k}| = |c_k|\)）。优点：便于与傅里叶变换衔接。</div>
-    
+    <div class="text">利用欧拉公式 \(e^{j\theta} = \cos\theta + j\sin\theta\)，可将傅里叶级数写成：<br>\(f(t) = \sum_{k=-\infty}^{\infty} c_k e^{jk\omega_1 t}\)，其中 \(c_k = \frac{1}{T} \int_0^T f(t) e^{-jk\omega_1 t} dt\)。<br>特点：\(k\) 取正负整数，频谱对称（\(|c_{-k}| = |c_k|\)）。<br>优点：便于与傅里叶变换衔接。</div>
     <h3>§13-6 频谱</h3>
-    <div class="text">定义：以频率（或角频率）为横坐标，以各次谐波的振幅（或 \(c_k\) 的模）为纵坐标画出的线状图形。特点：离散性：只在基波频率的整数倍处有谱线。收敛性：谐波次数越高，幅度越小。带宽：信号能量集中的频率范围。</div>
+    <div class="text">定义：以频率（或角频率）为横坐标，以各次谐波的振幅（或 \(c_k\) 的模）为纵坐标画出的线状图形。<br>特点：离散性：只在基波频率的整数倍处有谱线。<br>收敛性：谐波次数越高，幅度越小。<br>带宽：信号能量集中的频率范围。</div>
 </div>
 
-<!-- ======================= 第14章 完整无删减内容 ======================= -->
+<!-- 第14章 完整内容（换行优化） -->
 <div class="chapterPage" id="ch14">
     <div class="backBtn" onclick="showHome()">← 返回首页</div>
     <h2>第十四章 线性动态电路的复频域分析</h2>
     <div class="text">本章引入拉普拉斯变换，将时域的微分方程转化为频域的代数方程，是求解高阶动态电路的有力工具。</div>
-    
     <h3>§14-1 拉普拉斯变换的定义</h3>
-    <div class="text"><strong>一、为什么需要拉普拉斯变换？</strong> 时域法的困难：对于高阶电路，求解微分方程需要确定多个积分常数，计算繁琐。拉氏变换的优势：将微分方程转化为代数方程；自动包含初始条件，无需单独求积分常数；可以处理冲激函数等奇异函数。</div>
-    <div class="text"><strong>二、定义</strong> 对于定义在 \([0, \infty)\) 的时间函数 \(f(t)\)，其拉普拉斯变换（简称拉氏变换）定义为：\(F(s) = \mathcal{L}[f(t)] = \int_{0_-}^{\infty} f(t) e^{-st} dt\)。其中\(s = \sigma + j\omega\)：复频率，是复数变量；\(F(s)\)：象函数，是 \(s\) 的复变函数；\(f(t)\)：原函数。积分下限取 \(0_-\)：可以包含 \(t=0\) 时刻的冲激函数。</div>
+    <div class="text"><strong>一、为什么需要拉普拉斯变换？</strong><br>时域法的困难：对于高阶电路，求解微分方程需要确定多个积分常数，计算繁琐。<br>拉氏变换的优势：将微分方程转化为代数方程；自动包含初始条件，无需单独求积分常数；可以处理冲激函数等奇异函数。</div>
+    <div class="text"><strong>二、定义</strong><br>对于定义在 \([0, \infty)\) 的时间函数 \(f(t)\)，其拉普拉斯变换（简称拉氏变换）定义为：<br>\(F(s) = \mathcal{L}[f(t)] = \int_{0_-}^{\infty} f(t) e^{-st} dt\)。<br>其中\(s = \sigma + j\omega\)：复频率，是复数变量；\(F(s)\)：象函数，是 \(s\) 的复变函数；\(f(t)\)：原函数。<br>积分下限取 \(0_-\)：可以包含 \(t=0\) 时刻的冲激函数。</div>
     <div class="text"><strong>三、常用函数的拉氏变换</strong></div>
-    <table>
-        <thead><tr><th>原函数 \(f(t)\)</th><th>象函数 \(F(s)\)</th></tr></thead>
-        <tbody><tr><td>单位冲激函数 \(\delta(t)\)</td><td>1</td></tr><tr><td>单位阶跃函数 \(\epsilon(t)\)</td><td>\(1/s\)</td></tr><tr><td>指数函数 \(e^{-at}\)</td><td>\(1/(s+a)\)</td></tr><tr><td>正弦函数 \(\sin(\omega t)\)</td><td>\(\omega/(s^2+\omega^2)\)</td></tr><tr><td>余弦函数 \(\cos(\omega t)\)</td><td>\(s/(s^2+\omega^2)\)</td></tr><tr><td>幂函数 \(t^n\)</td><td>\(n!/s^{n+1}\)</td></tr></tbody>
-    </table>
-    
+    <table><thead><tr><th>原函数 \(f(t)\)</th><th>象函数 \(F(s)\)</th></tr></thead><tbody><tr><td>单位冲激函数 \(\delta(t)\)</td><td>1</td></tr><tr><td>单位阶跃函数 \(\epsilon(t)\)</td><td>\(1/s\)</td></tr><tr><td>指数函数 \(e^{-at}\)</td><td>\(1/(s+a)\)</td></tr><tr><td>正弦函数 \(\sin(\omega t)\)</td><td>\(\omega/(s^2+\omega^2)\)</td></tr><tr><td>余弦函数 \(\cos(\omega t)\)</td><td>\(s/(s^2+\omega^2)\)</td></tr><tr><td>幂函数 \(t^n\)</td><td>\(n!/s^{n+1}\)</td></tr></tbody></table>
     <h3>§14-2 拉普拉斯变换的基本性质</h3>
     <div class="text"><strong>一、线性性质</strong> \(\mathcal{L}[af_1(t) + bf_2(t)] = aF_1(s) + bF_2(s)\)</div>
-    <div class="text"><strong>二、微分性质（最重要！）</strong> \(\mathcal{L}\left[\frac{df(t)}{dt}\right] = sF(s) - f(0_-)\)，\(\mathcal{L}\left[\frac{d^2f(t)}{dt^2}\right] = s^2F(s) - sf(0_-) - f'(0_-)\)。意义：时域的微分运算，在频域中变为乘以 \(s\) 并减去初始值。初始条件被自动计入！</div>
+    <div class="text"><strong>二、微分性质（最重要！）</strong><br>\(\mathcal{L}\left[\frac{df(t)}{dt}\right] = sF(s) - f(0_-)\)，\(\mathcal{L}\left[\frac{d^2f(t)}{dt^2}\right] = s^2F(s) - sf(0_-) - f'(0_-)\)。<br>意义：时域的微分运算，在频域中变为乘以 \(s\) 并减去初始值。初始条件被自动计入！</div>
     <div class="text"><strong>三、积分性质</strong> \(\mathcal{L}\left[\int_{0_-}^t f(\xi) d\xi\right] = \frac{F(s)}{s}\)</div>
-    <div class="text"><strong>四、延迟性质</strong> \(\mathcal{L}[f(t-t_0)\epsilon(t-t_0)] = e^{-st_0}F(s)\)。意义：时域延迟 \(t_0\)，频域乘以 \(e^{-st_0}\)。</div>
-    
+    <div class="text"><strong>四、延迟性质</strong> \(\mathcal{L}[f(t-t_0)\epsilon(t-t_0)] = e^{-st_0}F(s)\)。<br>意义：时域延迟 \(t_0\)，频域乘以 \(e^{-st_0}\)。</div>
     <h3>§14-3 拉普拉斯反变换——部分分式展开法</h3>
-    <div class="text"><strong>一、一般形式</strong> 电路的响应象函数通常是 \(s\) 的有理分式：\(F(s) = \frac{N(s)}{D(s)} = \frac{a_m s^m + a_{m-1}s^{m-1} + \cdots + a_0}{b_n s^n + b_{n-1}s^{n-1} + \cdots + b_0} \quad (n > m)\)</div>
+    <div class="text"><strong>一、一般形式</strong><br>电路的响应象函数通常是 \(s\) 的有理分式：<br>\(F(s) = \frac{N(s)}{D(s)} = \frac{a_m s^m + a_{m-1}s^{m-1} + \cdots + a_0}{b_n s^n + b_{n-1}s^{n-1} + \cdots + b_0} \quad (n > m)\)</div>
     <div class="text"><strong>二、部分分式展开的三种情况</strong></div>
-    <div class="text"><strong>情况1：\(D(s)=0\) 有单根</strong> 设 \(p_1, p_2, \dots, p_n\) 为单根，则 \(F(s) = \frac{K_1}{s-p_1} + \frac{K_2}{s-p_2} + \cdots + \frac{K_n}{s-p_n}\)，\(K_i = (s-p_i)F(s)\big|_{s=p_i} = \frac{N(p_i)}{D'(p_i)}\)，原函数 \(f(t) = \sum_{i=1}^n K_i e^{p_i t}\)。</div>
-    <div class="text"><strong>情况2：\(D(s)=0\) 有共轭复根</strong> 设 \(p_{1,2} = -\alpha \pm j\omega\)，则对应的两项可合并为：\(\mathcal{L}^{-1}\left[\frac{K}{s+\alpha-j\omega} + \frac{K^*}{s+\alpha+j\omega}\right] = 2|K|e^{-\alpha t}\cos(\omega t + \angle K)\)。</div>
-    <div class="text"><strong>情况3：\(D(s)=0\) 有重根</strong> 设 \(s=p_1\) 为 \(q\) 重根，则 \(F(s) = \frac{K_{1q}}{(s-p_1)^q} + \frac{K_{1(q-1)}}{(s-p_1)^{q-1}} + \cdots + \frac{K_{11}}{s-p_1} + \cdots\)。系数计算公式（以 \(q=3\) 为例）：\(K_{11} = (s-p_1)^3 F(s)\big|_{s=p_1}\)，\(K_{12} = \frac{d}{ds}[(s-p_1)^3 F(s)]\big|_{s=p_1}\)，\(K_{13} = \frac{1}{2}\frac{d^2}{ds^2}[(s-p_1)^3 F(s)]\big|_{s=p_1}\)。</div>
-    
+    <div class="text"><strong>情况1：\(D(s)=0\) 有单根</strong><br>设 \(p_1, p_2, \dots, p_n\) 为单根，则 \(F(s) = \frac{K_1}{s-p_1} + \frac{K_2}{s-p_2} + \cdots + \frac{K_n}{s-p_n}\)，<br>\(K_i = (s-p_i)F(s)\big|_{s=p_i} = \frac{N(p_i)}{D'(p_i)}\)，原函数 \(f(t) = \sum_{i=1}^n K_i e^{p_i t}\)。</div>
+    <div class="text"><strong>情况2：\(D(s)=0\) 有共轭复根</strong><br>设 \(p_{1,2} = -\alpha \pm j\omega\)，则对应的两项可合并为：<br>\(\mathcal{L}^{-1}\left[\frac{K}{s+\alpha-j\omega} + \frac{K^*}{s+\alpha+j\omega}\right] = 2|K|e^{-\alpha t}\cos(\omega t + \angle K)\)。</div>
+    <div class="text"><strong>情况3：\(D(s)=0\) 有重根</strong><br>设 \(s=p_1\) 为 \(q\) 重根，则 \(F(s) = \frac{K_{1q}}{(s-p_1)^q} + \frac{K_{1(q-1)}}{(s-p_1)^{q-1}} + \cdots + \frac{K_{11}}{s-p_1} + \cdots\)。<br>系数计算公式（以 \(q=3\) 为例）：<br>\(K_{11} = (s-p_1)^3 F(s)\big|_{s=p_1}\)，<br>\(K_{12} = \frac{d}{ds}[(s-p_1)^3 F(s)]\big|_{s=p_1}\)，<br>\(K_{13} = \frac{1}{2}\frac{d^2}{ds^2}[(s-p_1)^3 F(s)]\big|_{s=p_1}\)。</div>
     <h3>§14-4 运算电路</h3>
-    <div class="text"><strong>一、基尔霍夫定律的运算形式</strong> KCL：\(\sum I(s) = 0\)；KVL：\(\sum U(s) = 0\)。</div>
-    <div class="text"><strong>二、电路元件的运算模型</strong> 电阻：\(U(s) = R I(s)\)。电感：\(U(s) = sL I(s) - L i(0_-)\)，等效电路：电感 \(L\) 与电压源 \(L i(0_-)\) 串联（方向与电流参考方向相反）。电容：\(U(s) = \frac{1}{sC} I(s) + \frac{u_C(0_-)}{s}\)，等效电路：电容 \(C\) 与电压源 \(u_C(0_-)/s\) 串联。互感：\(U_1(s) = sL_1 I_1(s) - L_1 i_1(0_-) + sM I_2(s) - M i_2(0_-)\)，\(U_2(s) = sL_2 I_2(s) - L_2 i_2(0_-) + sM I_1(s) - M i_1(0_-)\)。</div>
-    <div class="text"><strong>三、运算阻抗</strong> 定义：在零初始条件下，元件两端的电压象函数与电流象函数之比。电阻：\(Z_R(s) = R\)；电感：\(Z_L(s) = sL\)；电容：\(Z_C(s) = 1/(sC)\)。运算形式的欧姆定律：\(U(s) = Z(s) I(s)\)（零初始条件下）。</div>
-    
+    <div class="text"><strong>一、基尔霍夫定律的运算形式</strong><br>KCL：\(\sum I(s) = 0\)；KVL：\(\sum U(s) = 0\)。</div>
+    <div class="text"><strong>二、电路元件的运算模型</strong><br>电阻：\(U(s) = R I(s)\)。<br>电感：\(U(s) = sL I(s) - L i(0_-)\)，等效电路：电感 \(L\) 与电压源 \(L i(0_-)\) 串联（方向与电流参考方向相反）。<br>电容：\(U(s) = \frac{1}{sC} I(s) + \frac{u_C(0_-)}{s}\)，等效电路：电容 \(C\) 与电压源 \(u_C(0_-)/s\) 串联。<br>互感：\(U_1(s) = sL_1 I_1(s) - L_1 i_1(0_-) + sM I_2(s) - M i_2(0_-)\)，<br>\(U_2(s) = sL_2 I_2(s) - L_2 i_2(0_-) + sM I_1(s) - M i_1(0_-)\)。</div>
+    <div class="text"><strong>三、运算阻抗</strong><br>定义：在零初始条件下，元件两端的电压象函数与电流象函数之比。<br>电阻：\(Z_R(s) = R\)；电感：\(Z_L(s) = sL\)；电容：\(Z_C(s) = 1/(sC)\)。<br>运算形式的欧姆定律：\(U(s) = Z(s) I(s)\)（零初始条件下）。</div>
     <h3>§14-5 应用拉普拉斯变换法分析线性电路</h3>
-    <div class="text"><strong>分析步骤</strong>：1. 画运算电路：将时域电路中的电压源、电流源用它们的象函数表示；将电阻、电感、电容用它们的运算阻抗表示；将初始条件用附加电源表示（电感串联电压源，电容串联电压源）。2. 列方程：在运算电路中，用电阻电路的分析方法（结点法、网孔法、戴维宁定理等）列出代数方程。3. 求解象函数：解方程，得到响应的象函数 \(R(s)\)。4. 拉氏反变换：将 \(R(s)\) 进行部分分式展开，查表求原函数 \(r(t)\)。</div>
+    <div class="text"><strong>分析步骤</strong>：<br>1. 画运算电路：将时域电路中的电压源、电流源用它们的象函数表示；将电阻、电感、电容用它们的运算阻抗表示；将初始条件用附加电源表示（电感串联电压源，电容串联电压源）。<br>2. 列方程：在运算电路中，用电阻电路的分析方法（结点法、网孔法、戴维宁定理等）列出代数方程。<br>3. 求解象函数：解方程，得到响应的象函数 \(R(s)\)。<br>4. 拉氏反变换：将 \(R(s)\) 进行部分分式展开，查表求原函数 \(r(t)\)。</div>
     <div class="text"><strong>优点</strong>：自动计入初始条件；将微分方程转化为代数方程；可以方便地处理冲激函数。</div>
-    
     <h3>§14-6 网络函数</h3>
     <div class="text"><strong>定义</strong>：在线性时不变电路中，在零初始条件下，响应象函数与激励象函数之比：\(H(s) = \frac{R(s)}{E(s)}\)。</div>
     <div class="text"><strong>物理意义</strong>：当 \(E(s)=1\)（即 \(e(t)=\delta(t)\)）时，\(R(s)=H(s)\)。因此，网络函数的原函数就是单位冲激响应：\(h(t) = \mathcal{L}^{-1}[H(s)]\)。</div>
     <div class="text"><strong>分类</strong>：驱动点函数：激励和响应在同一端口（阻抗 \(Z(s)\) 或导纳 \(Y(s)\)）。转移函数：激励和响应在不同端口。</div>
-    
     <h3>§14-7 网络函数的极点和零点</h3>
-    <div class="text"><strong>标准形式</strong>：\(H(s) = H_0 \frac{(s-z_1)(s-z_2)\cdots(s-z_m)}{(s-p_1)(s-p_2)\cdots(s-p_n)}\)。零点：\(H(s)=0\) 的点，即分子多项式 \(N(s)=0\) 的根 \(z_1, z_2, \dots, z_m\)。极点：\(H(s) \to \infty\) 的点，即分母多项式 \(D(s)=0\) 的根 \(p_1, p_2, \dots, p_n\)。零极点图：在 \(s\) 平面上用“\(\circ\)”标零点，用“\(\times\)”标极点。</div>
-    <div class="text"><strong>极点的性质</strong>：左半平面极点（\(\text{Re}[p_i] < 0\)）：对应衰减的瞬态响应，电路稳定。右半平面极点（\(\text{Re}[p_i] > 0\)）：对应增长的响应，电路不稳定。虚轴上的极点（\(\text{Re}[p_i] = 0\)）：对应等幅振荡（临界稳定）。</div>
-    
+    <div class="text"><strong>标准形式</strong>：\(H(s) = H_0 \frac{(s-z_1)(s-z_2)\cdots(s-z_m)}{(s-p_1)(s-p_2)\cdots(s-p_n)}\)。<br>零点：\(H(s)=0\) 的点，即分子多项式 \(N(s)=0\) 的根 \(z_1, z_2, \dots, z_m\)。<br>极点：\(H(s) \to \infty\) 的点，即分母多项式 \(D(s)=0\) 的根 \(p_1, p_2, \dots, p_n\)。<br>零极点图：在 \(s\) 平面上用“\(\circ\)”标零点，用“\(\times\)”标极点。</div>
+    <div class="text"><strong>极点的性质</strong>：左半平面极点（\(\text{Re}[p_i] < 0\)）：对应衰减的瞬态响应，电路稳定。<br>右半平面极点（\(\text{Re}[p_i] > 0\)）：对应增长的响应，电路不稳定。<br>虚轴上的极点（\(\text{Re}[p_i] = 0\)）：对应等幅振荡（临界稳定）。</div>
     <h3>§14-8 极点、零点与冲激响应</h3>
-    <div class="text">\(h(t) = \sum_{i=1}^n K_i e^{p_i t}\)。极点决定响应的波形形态：负实极点 → 指数衰减；正实极点 → 指数增长（不稳定）；共轭复极点 → 衰减/增长振荡；虚轴共轭复极点 → 等幅振荡。极点位置与响应速度：极点离虚轴越远，衰减越快。</div>
-    
+    <div class="text">\(h(t) = \sum_{i=1}^n K_i e^{p_i t}\)。<br>极点决定响应的波形形态：负实极点 → 指数衰减；正实极点 → 指数增长（不稳定）；共轭复极点 → 衰减/增长振荡；虚轴共轭复极点 → 等幅振荡。<br>极点位置与响应速度：极点离虚轴越远，衰减越快。</div>
     <h3>§14-9 极点、零点与频率响应</h3>
-    <div class="text">令 \(s = j\omega\)，则 \(H(j\omega) = H_0 \frac{(j\omega-z_1)(j\omega-z_2)\cdots}{(j\omega-p_1)(j\omega-p_2)\cdots}\)。幅频特性：\(|H(j\omega)| = |H_0| \frac{\prod |j\omega-z_i|}{\prod |j\omega-p_j|}\)；相频特性：\(\phi(\omega) = \sum \angle(j\omega-z_i) - \sum \angle(j\omega-p_j)\)。几何求法：在 \(s\) 平面上，\(|j\omega-z_i|\) 是点 \(j\omega\) 到零点 \(z_i\) 的距离，\(\angle(j\omega-z_i)\) 是该向量的辐角。</div>
+    <div class="text">令 \(s = j\omega\)，则 \(H(j\omega) = H_0 \frac{(j\omega-z_1)(j\omega-z_2)\cdots}{(j\omega-p_1)(j\omega-p_2)\cdots}\)。<br>幅频特性：\(|H(j\omega)| = |H_0| \frac{\prod |j\omega-z_i|}{\prod |j\omega-p_j|}\)；<br>相频特性：\(\phi(\omega) = \sum \angle(j\omega-z_i) - \sum \angle(j\omega-p_j)\)。<br>几何求法：在 \(s\) 平面上，\(|j\omega-z_i|\) 是点 \(j\omega\) 到零点 \(z_i\) 的距离，\(\angle(j\omega-z_i)\) 是该向量的辐角。</div>
 </div>
 
-<!-- ======================= 第15章 完整无删减内容 ======================= -->
+<!-- 第15章 完整内容（换行优化） -->
 <div class="chapterPage" id="ch15">
     <div class="backBtn" onclick="showHome()">← 返回首页</div>
     <h2>第十五章 电路方程的矩阵形式</h2>
     <div class="text">本章介绍如何用矩阵形式系统地建立电路方程，为计算机辅助分析奠定基础。</div>
-    
     <h3>§15-1 割集</h3>
-    <div class="text"><strong>一、割集的定义</strong> 割集 \(Q\) 是连通图 \(G\) 的一个支路集合，满足：1. 移去 \(Q\) 中的所有支路，图 \(G\) 被分成两个部分。2. 少移去其中任意一条支路，图 \(G\) 仍然是连通的。通俗理解：割集是把图“切断”所需的最少支路集合。判定方法：在图上作一个闭合面，与闭合面相交的支路构成一个割集。</div>
-    <div class="text"><strong>二、基本割集（单树支割集）</strong> 选定一个树后，每一条树支与若干连支构成一个割集。这样的割集称为基本割集，共有 \(n-1\) 个（\(n\) 为结点数）。方向规定：基本割集的方向与该树支的方向一致。</div>
-    
+    <div class="text"><strong>一、割集的定义</strong><br>割集 \(Q\) 是连通图 \(G\) 的一个支路集合，满足：1. 移去 \(Q\) 中的所有支路，图 \(G\) 被分成两个部分。2. 少移去其中任意一条支路，图 \(G\) 仍然是连通的。<br>通俗理解：割集是把图“切断”所需的最少支路集合。<br>判定方法：在图上作一个闭合面，与闭合面相交的支路构成一个割集。</div>
+    <div class="text"><strong>二、基本割集（单树支割集）</strong><br>选定一个树后，每一条树支与若干连支构成一个割集。<br>这样的割集称为基本割集，共有 \(n-1\) 个（\(n\) 为结点数）。<br>方向规定：基本割集的方向与该树支的方向一致。</div>
     <h3>§15-2 关联矩阵、回路矩阵、割集矩阵</h3>
-    <div class="text"><strong>一、关联矩阵 \(A\)</strong> 维度：\((n-1) \times b\)（降阶关联矩阵）。元素定义：\(a_{jk} = \begin{cases}+1 & \text{支路 }k \text{ 与结点 }j \text{ 关联，且方向背离结点} \\ -1 & \text{支路 }k \text{ 与结点 }j \text{ 关联，且方向指向结点} \\ 0 & \text{支路 }k \text{ 与结点 }j \text{ 无关联}\end{cases}\)。KCL的矩阵形式：\(A i = 0\)；KVL的矩阵形式：\(u = A^T u_n\)。</div>
-    <div class="text"><strong>二、回路矩阵 \(B\)</strong> 维度：\(l \times b\)（\(l = b-n+1\) 为独立回路数）。元素定义：\(b_{jk} = \begin{cases}+1 & \text{支路 }k \text{ 与回路 }j \text{ 关联，且方向一致} \\ -1 & \text{支路 }k \text{ 与回路 }j \text{ 关联，且方向相反} \\ 0 & \text{支路 }k \text{ 与回路 }j \text{ 无关联}\end{cases}\)。基本回路矩阵 \(B_f\)：按“先连支、后树支”排列，有 \(B_f = [I_l \; B_t]\)。KVL的矩阵形式：\(B u = 0\)；KCL的矩阵形式：\(i = B^T i_l\)。</div>
-    <div class="text"><strong>三、割集矩阵 \(Q\)</strong> 维度：\((n-1) \times b\)。元素定义：与关联矩阵类似，但行对应割集。基本割集矩阵 \(Q_f\)：按“先树支、后连支”排列，有 \(Q_f = [I_t \; Q_l]\)。KCL的矩阵形式：\(Q i = 0\)；KVL的矩阵形式：\(u = Q^T u_t\)。</div>
-    
+    <div class="text"><strong>一、关联矩阵 \(A\)</strong><br>维度：\((n-1) \times b\)（降阶关联矩阵）。<br>元素定义：\(a_{jk} = \begin{cases}+1 & \text{支路 }k \text{ 与结点 }j \text{ 关联，且方向背离结点} \\ -1 & \text{支路 }k \text{ 与结点 }j \text{ 关联，且方向指向结点} \\ 0 & \text{支路 }k \text{ 与结点 }j \text{ 无关联}\end{cases}\)。<br>KCL的矩阵形式：\(A i = 0\)；KVL的矩阵形式：\(u = A^T u_n\)。</div>
+    <div class="text"><strong>二、回路矩阵 \(B\)</strong><br>维度：\(l \times b\)（\(l = b-n+1\) 为独立回路数）。<br>元素定义：\(b_{jk} = \begin{cases}+1 & \text{支路 }k \text{ 与回路 }j \text{ 关联，且方向一致} \\ -1 & \text{支路 }k \text{ 与回路 }j \text{ 关联，且方向相反} \\ 0 & \text{支路 }k \text{ 与回路 }j \text{ 无关联}\end{cases}\)。<br>基本回路矩阵 \(B_f\)：按“先连支、后树支”排列，有 \(B_f = [I_l \; B_t]\)。<br>KVL的矩阵形式：\(B u = 0\)；KCL的矩阵形式：\(i = B^T i_l\)。</div>
+    <div class="text"><strong>三、割集矩阵 \(Q\)</strong><br>维度：\((n-1) \times b\)。<br>元素定义：与关联矩阵类似，但行对应割集。<br>基本割集矩阵 \(Q_f\)：按“先树支、后连支”排列，有 \(Q_f = [I_t \; Q_l]\)。<br>KCL的矩阵形式：\(Q i = 0\)；KVL的矩阵形式：\(u = Q^T u_t\)。</div>
     <h3>§15-3 矩阵 \(A, B_f, Q_f\) 之间的关系</h3>
     <div class="text">\(A B_f^T = 0\) 或 \(B_f A^T = 0\)；\(Q_f B_f^T = 0\) 或 \(B_f Q_f^T = 0\)；\(Q_l = -B_t^T = A_t^{-1} A_l\)。</div>
-    
     <h3>§15-4 回路电流方程的矩阵形式</h3>
     <div class="text"><strong>复合支路的定义</strong>：每条支路由阻抗 \(Z_k\)（或导纳 \(Y_k\)）、电压源 \(\dot{U}_{sk}\)、电流源 \(\dot{I}_{sk}\) 串联/并联组成。</div>
     <div class="text"><strong>支路方程的矩阵形式</strong>：\(\dot{U} = Z(\dot{I} + \dot{I}_s) - \dot{U}_s\) 或 \(\dot{I} = Y(\dot{U} + \dot{U}_s) - \dot{I}_s\)。</div>
-    <div class="text"><strong>回路电流方程的推导</strong>：1. KCL：\(\dot{I} = B^T \dot{I}_l\)；2. KVL：\(B \dot{U} = 0\)；3. 支路方程：\(\dot{U} = Z \dot{I} + Z \dot{I}_s - \dot{U}_s\)。代入得：\(B Z B^T \dot{I}_l = B \dot{U}_s - B Z \dot{I}_s\)。回路阻抗矩阵 \(Z_l = B Z B^T\)：\(l \times l\) 方阵，主对角元为自阻抗，非对角元为互阻抗。</div>
-    
+    <div class="text"><strong>回路电流方程的推导</strong>：<br>1. KCL：\(\dot{I} = B^T \dot{I}_l\)；2. KVL：\(B \dot{U} = 0\)；3. 支路方程：\(\dot{U} = Z \dot{I} + Z \dot{I}_s - \dot{U}_s\)。<br>代入得：\(B Z B^T \dot{I}_l = B \dot{U}_s - B Z \dot{I}_s\)。<br>回路阻抗矩阵 \(Z_l = B Z B^T\)：\(l \times l\) 方阵，主对角元为自阻抗，非对角元为互阻抗。</div>
     <h3>§15-5 结点电压方程的矩阵形式</h3>
-    <div class="text"><strong>结点电压方程的推导</strong>：1. KVL：\(\dot{U} = A^T \dot{U}_n\)；2. KCL：\(A \dot{I} = 0\)；3. 支路方程：\(\dot{I} = Y \dot{U} + Y \dot{U}_s - \dot{I}_s\)。代入得：\(A Y A^T \dot{U}_n = A \dot{I}_s - A Y \dot{U}_s\)。结点导纳矩阵 \(Y_n = A Y A^T\)：\((n-1) \times (n-1)\) 方阵。主对角元 \(Y_{ii}\)：与结点 \(i\) 相连的所有支路导纳之和（自导，正值）。非对角元 \(Y_{ij}\)：连接结点 \(i\) 和 \(j\) 的支路导纳的负值（互导，负值）。结点注入电流列向量 \(J_n = A \dot{I}_s - A Y \dot{U}_s\)。</div>
-    
+    <div class="text"><strong>结点电压方程的推导</strong>：<br>1. KVL：\(\dot{U} = A^T \dot{U}_n\)；2. KCL：\(A \dot{I} = 0\)；3. 支路方程：\(\dot{I} = Y \dot{U} + Y \dot{U}_s - \dot{I}_s\)。<br>代入得：\(A Y A^T \dot{U}_n = A \dot{I}_s - A Y \dot{U}_s\)。<br>结点导纳矩阵 \(Y_n = A Y A^T\)：\((n-1) \times (n-1)\) 方阵。<br>主对角元 \(Y_{ii}\)：与结点 \(i\) 相连的所有支路导纳之和（自导，正值）。<br>非对角元 \(Y_{ij}\)：连接结点 \(i\) 和 \(j\) 的支路导纳的负值（互导，负值）。<br>结点注入电流列向量 \(J_n = A \dot{I}_s - A Y \dot{U}_s\)。</div>
     <h3>§15-6 割集电压方程的矩阵形式</h3>
-    <div class="text">类似结点电压法，用基本割集矩阵 \(Q_f\) 代替关联矩阵 \(A\)：\(Q_f Y Q_f^T \dot{U}_t = Q_f \dot{I}_s - Q_f Y \dot{U}_s\)。割集导纳矩阵 \(Y_t = Q_f Y Q_f^T\)。物理意义：割集电压法可以看作是结点电压法的推广。当每个割集都汇集在一个结点上时，割集电压法就退化为结点电压法。</div>
-    
+    <div class="text">类似结点电压法，用基本割集矩阵 \(Q_f\) 代替关联矩阵 \(A\)：<br>\(Q_f Y Q_f^T \dot{U}_t = Q_f \dot{I}_s - Q_f Y \dot{U}_s\)。<br>割集导纳矩阵 \(Y_t = Q_f Y Q_f^T\)。<br>物理意义：割集电压法可以看作是结点电压法的推广。当每个割集都汇集在一个结点上时，割集电压法就退化为结点电压法。</div>
     <h3>§15-7 列表法</h3>
-    <div class="text"><strong>为什么需要列表法？</strong> 结点电压法：不允许无伴电压源。回路电流法：不允许无伴电流源。列表法：对支路类型无限制，适应性强。</div>
+    <div class="text"><strong>为什么需要列表法？</strong><br>结点电压法：不允许无伴电压源。回路电流法：不允许无伴电流源。列表法：对支路类型无限制，适应性强。</div>
     <div class="text"><strong>基本思想</strong>：将支路电压 \(\dot{U}\)、支路电流 \(\dot{I}\)、结点电压 \(\dot{U}_n\) 都作为未知量，联立求解。</div>
-    <div class="text"><strong>方程组成</strong>：1. KCL：\(A \dot{I} = 0\)（\(n-1\) 个方程）；2. KVL：\(\dot{U} - A^T \dot{U}_n = 0\)（\(b\) 个方程）；3. 支路方程：\(F \dot{U} + H \dot{I} = \dot{U}_s + \dot{I}_s\)（\(b\) 个方程）。</div>
-    <div class="text"><strong>矩阵形式</strong>：\(\begin{bmatrix}0 & 0 & A \\ -A^T & I_b & 0 \\ 0 & F & H\end{bmatrix} \begin{bmatrix}\dot{U}_n \\ \dot{U} \\ \dot{I}\end{bmatrix} = \begin{bmatrix}0 \\ 0 \\ \dot{U}_s + \dot{I}_s\end{bmatrix}\)。总方程数：\(2b + n - 1\)。优点：适应性强，可以处理各种类型的支路（包括受控源、互感、理想变压器等）。缺点：方程数较多，但系数矩阵稀疏，适合计算机求解。</div>
+    <div class="text"><strong>方程组成</strong>：<br>1. KCL：\(A \dot{I} = 0\)（\(n-1\) 个方程）；<br>2. KVL：\(\dot{U} - A^T \dot{U}_n = 0\)（\(b\) 个方程）；<br>3. 支路方程：\(F \dot{U} + H \dot{I} = \dot{U}_s + \dot{I}_s\)（\(b\) 个方程）。</div>
+    <div class="text"><strong>矩阵形式</strong>：<br>\(\begin{bmatrix}0 & 0 & A \\ -A^T & I_b & 0 \\ 0 & F & H\end{bmatrix} \begin{bmatrix}\dot{U}_n \\ \dot{U} \\ \dot{I}\end{bmatrix} = \begin{bmatrix}0 \\ 0 \\ \dot{U}_s + \dot{I}_s\end{bmatrix}\)。<br>总方程数：\(2b + n - 1\)。<br>优点：适应性强，可以处理各种类型的支路（包括受控源、互感、理想变压器等）。<br>缺点：方程数较多，但系数矩阵稀疏，适合计算机求解。</div>
 </div>
 
-<!-- ======================= 第16章 完整无删减内容 ======================= -->
+<!-- 第16章 完整内容（换行优化） -->
 <div class="chapterPage" id="ch16">
     <div class="backBtn" onclick="showHome()">← 返回首页</div>
     <h2>第十六章 二端口网络</h2>
     <div class="text">本章研究具有两对端口的网络，分析其端口特性及参数描述。核心是理解各种参数的定义、物理意义及其相互转换。</div>
-    
     <h3>§16-1 二端口网络</h3>
-    <div class="text"><strong>一、基本概念</strong> - <strong>二端口网络</strong>：具有两对端子的网络，且满足<strong>端口条件</strong>——从一个端子流入的电流等于从另一个端子流出的电流。- <strong>与四端网络的区别</strong>：四端网络不要求满足端口条件（电流不一定成对相等）。- <strong>常见应用</strong>：变压器、滤波器、放大器、反馈网络、传输线等。- <strong>图形符号</strong>：一个方框，左边是端口1（输入），右边是端口2（输出）。</div>
-    <div class="text"><strong>二、为什么要研究二端口？</strong> - <strong>黑箱思想</strong>：只关心端口的外部特性（电压、电流关系），不关心内部结构。- <strong>模块化</strong>：复杂网络可以分解为多个简单二端口的连接。- <strong>标准化</strong>：用统一的参数描述不同内部结构的网络，便于比较和设计。</div>
-    <div class="text"><strong>三、基本约定</strong> - <strong>电压、电流参考方向</strong>：端口1：\(\dot{U}_1\) 和 \(\dot{I}_1\) 取关联方向（电流流入为正）。端口2：\(\dot{U}_2\) 和 \(\dot{I}_2\) 取关联方向（电流流入为正）。<strong>注意</strong>：输出端口电流 \(I_2\) 的参考方向通常<strong>指向网络内部</strong>（即负载电流流出网络）。</div>
-    
+    <div class="text"><strong>一、基本概念</strong><br>- <strong>二端口网络</strong>：具有两对端子的网络，且满足<strong>端口条件</strong>——从一个端子流入的电流等于从另一个端子流出的电流。<br>- <strong>与四端网络的区别</strong>：四端网络不要求满足端口条件（电流不一定成对相等）。<br>- <strong>常见应用</strong>：变压器、滤波器、放大器、反馈网络、传输线等。<br>- <strong>图形符号</strong>：一个方框，左边是端口1（输入），右边是端口2（输出）。</div>
+    <div class="text"><strong>二、为什么要研究二端口？</strong><br>- <strong>黑箱思想</strong>：只关心端口的外部特性（电压、电流关系），不关心内部结构。<br>- <strong>模块化</strong>：复杂网络可以分解为多个简单二端口的连接。<br>- <strong>标准化</strong>：用统一的参数描述不同内部结构的网络，便于比较和设计。</div>
+    <div class="text"><strong>三、基本约定</strong><br>- <strong>电压、电流参考方向</strong>：端口1：\(\dot{U}_1\) 和 \(\dot{I}_1\) 取关联方向（电流流入为正）。端口2：\(\dot{U}_2\) 和 \(\dot{I}_2\) 取关联方向（电流流入为正）。<br><strong>注意</strong>：输出端口电流 \(I_2\) 的参考方向通常<strong>指向网络内部</strong>（即负载电流流出网络）。</div>
     <h3>§16-2 二端口的方程和参数</h3>
-    <div class="text"><strong>一、Y参数（短路导纳参数）</strong> 定义方程：\(\begin{cases} \dot{I}_1 = Y_{11} \dot{U}_1 + Y_{12} \dot{U}_2 \\ \dot{I}_2 = Y_{21} \dot{U}_1 + Y_{22} \dot{U}_2 \end{cases}\)。参数含义：\(Y_{11} = \left. \frac{\dot{I}_1}{\dot{U}_1} \right|_{\dot{U}_2=0}\)（端口2短路时端口1输入导纳），\(Y_{12} = \left. \frac{\dot{I}_1}{\dot{U}_2} \right|_{\dot{U}_1=0}\)，\(Y_{21} = \left. \frac{\dot{I}_2}{\dot{U}_1} \right|_{\dot{U}_2=0}\)，\(Y_{22} = \left. \frac{\dot{I}_2}{\dot{U}_2} \right|_{\dot{U}_1=0}\)。矩阵形式：\(\begin{bmatrix} \dot{I}_1 \\ \dot{I}_2 \end{bmatrix} = \begin{bmatrix} Y_{11} & Y_{12} \\ Y_{21} & Y_{22} \end{bmatrix} \begin{bmatrix} \dot{U}_1 \\ \dot{U}_2 \end{bmatrix}\)。重要性质：<strong>互易性</strong>（对于仅含线性电阻、电感、电容的无源二端口，有 \(Y_{12}=Y_{21}\)，此时只有3个独立参数）；<strong>对称性</strong>（如果结构上对称，还有 \(Y_{11}=Y_{22}\)，此时只有2个独立参数）。</div>
-    <div class="text"><strong>二、Z参数（开路阻抗参数）</strong> 定义方程：\(\begin{cases} \dot{U}_1 = Z_{11} \dot{I}_1 + Z_{12} \dot{I}_2 \\ \dot{U}_2 = Z_{21} \dot{I}_1 + Z_{22} \dot{I}_2 \end{cases}\)。参数含义：\(Z_{11} = \left. \frac{\dot{U}_1}{\dot{I}_1} \right|_{\dot{I}_2=0}\)（端口2开路时端口1输入阻抗），\(Z_{12} = \left. \frac{\dot{U}_1}{\dot{I}_2} \right|_{\dot{I}_1=0}\)，\(Z_{21} = \left. \frac{\dot{U}_2}{\dot{I}_1} \right|_{\dot{I}_2=0}\)，\(Z_{22} = \left. \frac{\dot{U}_2}{\dot{I}_2} \right|_{\dot{I}_1=0}\)。矩阵形式：\(\begin{bmatrix} \dot{U}_1 \\ \dot{U}_2 \end{bmatrix} = \begin{bmatrix} Z_{11} & Z_{12} \\ Z_{21} & Z_{22} \end{bmatrix} \begin{bmatrix} \dot{I}_1 \\ \dot{I}_2 \end{bmatrix}\)。<strong>Y与Z的关系</strong>：\(Z = Y^{-1}\)，转换公式：\(Z_{11} = \frac{Y_{22}}{\Delta_Y}, Z_{12} = -\frac{Y_{12}}{\Delta_Y}, Z_{21} = -\frac{Y_{21}}{\Delta_Y}, Z_{22} = \frac{Y_{11}}{\Delta_Y}\)，其中 \(\Delta_Y = Y_{11}Y_{22} - Y_{12}Y_{21}\)。</div>
-    <div class="text"><strong>三、T参数（传输参数/A参数）</strong> 定义方程：\(\begin{cases} \dot{U}_1 = A \dot{U}_2 - B \dot{I}_2 \\ \dot{I}_1 = C \dot{U}_2 - D \dot{I}_2 \end{cases}\)。参数含义：\(A = \left. \frac{\dot{U}_1}{\dot{U}_2} \right|_{\dot{I}_2=0}\)（端口2开路时的电压传输比），\(B = \left. \frac{\dot{U}_1}{-\dot{I}_2} \right|_{\dot{U}_2=0}\)（端口2短路时的转移阻抗），\(C = \left. \frac{\dot{I}_1}{\dot{U}_2} \right|_{\dot{I}_2=0}\)（端口2开路时的转移导纳），\(D = \left. \frac{\dot{I}_1}{-\dot{I}_2} \right|_{\dot{U}_2=0}\)（端口2短路时的电流传输比）。矩阵形式：\(\begin{bmatrix} \dot{U}_1 \\ \dot{I}_1 \end{bmatrix} = \begin{bmatrix} A & B \\ C & D \end{bmatrix} \begin{bmatrix} \dot{U}_2 \\ -\dot{I}_2 \end{bmatrix}\)。重要性质：<strong>互易性</strong>（无源线性二端口满足 \(AD - BC = 1\)），<strong>对称性</strong>（如果结构对称，还有 \(A = D\)）。<strong>为什么T参数重要？</strong> 最适合描述<strong>级联</strong>连接的二端口。</div>
-    <div class="text"><strong>四、H参数（混合参数）</strong> 定义方程：\(\begin{cases} \dot{U}_1 = H_{11} \dot{I}_1 + H_{12} \dot{U}_2 \\ \dot{I}_2 = H_{21} \dot{I}_1 + H_{22} \dot{U}_2 \end{cases}\)。参数含义：\(H_{11} = \left. \frac{\dot{U}_1}{\dot{I}_1} \right|_{\dot{U}_2=0}\)（端口2短路时的输入阻抗），\(H_{12} = \left. \frac{\dot{U}_1}{\dot{U}_2} \right|_{\dot{I}_1=0}\)（端口1开路时的反向电压传输比），\(H_{21} = \left. \frac{\dot{I}_2}{\dot{I}_1} \right|_{\dot{U}_2=0}\)（端口2短路时的正向电流传输比），\(H_{22} = \left. \frac{\dot{I}_2}{\dot{U}_2} \right|_{\dot{I}_1=0}\)（端口1开路时的输出导纳）。<strong>应用</strong>：H参数广泛应用于晶体管的小信号建模（如 \(h_{fe}\)、\(h_{ie}\) 等）。</div>
-    
+    <div class="text"><strong>一、Y参数（短路导纳参数）</strong><br>定义方程：\(\begin{cases} \dot{I}_1 = Y_{11} \dot{U}_1 + Y_{12} \dot{U}_2 \\ \dot{I}_2 = Y_{21} \dot{U}_1 + Y_{22} \dot{U}_2 \end{cases}\)。<br>参数含义：\(Y_{11} = \left. \frac{\dot{I}_1}{\dot{U}_1} \right|_{\dot{U}_2=0}\)（端口2短路时端口1输入导纳），\(Y_{12} = \left. \frac{\dot{I}_1}{\dot{U}_2} \right|_{\dot{U}_1=0}\)，\(Y_{21} = \left. \frac{\dot{I}_2}{\dot{U}_1} \right|_{\dot{U}_2=0}\)，\(Y_{22} = \left. \frac{\dot{I}_2}{\dot{U}_2} \right|_{\dot{U}_1=0}\)。<br>矩阵形式：\(\begin{bmatrix} \dot{I}_1 \\ \dot{I}_2 \end{bmatrix} = \begin{bmatrix} Y_{11} & Y_{12} \\ Y_{21} & Y_{22} \end{bmatrix} \begin{bmatrix} \dot{U}_1 \\ \dot{U}_2 \end{bmatrix}\)。<br>重要性质：<strong>互易性</strong>（对于仅含线性电阻、电感、电容的无源二端口，有 \(Y_{12}=Y_{21}\)，此时只有3个独立参数）；<strong>对称性</strong>（如果结构上对称，还有 \(Y_{11}=Y_{22}\)，此时只有2个独立参数）。</div>
+    <div class="text"><strong>二、Z参数（开路阻抗参数）</strong><br>定义方程：\(\begin{cases} \dot{U}_1 = Z_{11} \dot{I}_1 + Z_{12} \dot{I}_2 \\ \dot{U}_2 = Z_{21} \dot{I}_1 + Z_{22} \dot{I}_2 \end{cases}\)。<br>参数含义：\(Z_{11} = \left. \frac{\dot{U}_1}{\dot{I}_1} \right|_{\dot{I}_2=0}\)（端口2开路时端口1输入阻抗），\(Z_{12} = \left. \frac{\dot{U}_1}{\dot{I}_2} \right|_{\dot{I}_1=0}\)，\(Z_{21} = \left. \frac{\dot{U}_2}{\dot{I}_1} \right|_{\dot{I}_2=0}\)，\(Z_{22} = \left. \frac{\dot{U}_2}{\dot{I}_2} \right|_{\dot{I}_1=0}\)。<br>矩阵形式：\(\begin{bmatrix} \dot{U}_1 \\ \dot{U}_2 \end{bmatrix} = \begin{bmatrix} Z_{11} & Z_{12} \\ Z_{21} & Z_{22} \end{bmatrix} \begin{bmatrix} \dot{I}_1 \\ \dot{I}_2 \end{bmatrix}\)。<br><strong>Y与Z的关系</strong>：\(Z = Y^{-1}\)，转换公式：\(Z_{11} = \frac{Y_{22}}{\Delta_Y}, Z_{12} = -\frac{Y_{12}}{\Delta_Y}, Z_{21} = -\frac{Y_{21}}{\Delta_Y}, Z_{22} = \frac{Y_{11}}{\Delta_Y}\)，其中 \(\Delta_Y = Y_{11}Y_{22} - Y_{12}Y_{21}\)。</div>
+    <div class="text"><strong>三、T参数（传输参数/A参数）</strong><br>定义方程：\(\begin{cases} \dot{U}_1 = A \dot{U}_2 - B \dot{I}_2 \\ \dot{I}_1 = C \dot{U}_2 - D \dot{I}_2 \end{cases}\)。<br>参数含义：\(A = \left. \frac{\dot{U}_1}{\dot{U}_2} \right|_{\dot{I}_2=0}\)（端口2开路时的电压传输比），\(B = \left. \frac{\dot{U}_1}{-\dot{I}_2} \right|_{\dot{U}_2=0}\)（端口2短路时的转移阻抗），\(C = \left. \frac{\dot{I}_1}{\dot{U}_2} \right|_{\dot{I}_2=0}\)（端口2开路时的转移导纳），\(D = \left. \frac{\dot{I}_1}{-\dot{I}_2} \right|_{\dot{U}_2=0}\)（端口2短路时的电流传输比）。<br>矩阵形式：\(\begin{bmatrix} \dot{U}_1 \\ \dot{I}_1 \end{bmatrix} = \begin{bmatrix} A & B \\ C & D \end{bmatrix} \begin{bmatrix} \dot{U}_2 \\ -\dot{I}_2 \end{bmatrix}\)。<br>重要性质：<strong>互易性</strong>（无源线性二端口满足 \(AD - BC = 1\)），<strong>对称性</strong>（如果结构对称，还有 \(A = D\)）。<br><strong>为什么T参数重要？</strong> 最适合描述<strong>级联</strong>连接的二端口。</div>
+    <div class="text"><strong>四、H参数（混合参数）</strong><br>定义方程：\(\begin{cases} \dot{U}_1 = H_{11} \dot{I}_1 + H_{12} \dot{U}_2 \\ \dot{I}_2 = H_{21} \dot{I}_1 + H_{22} \dot{U}_2 \end{cases}\)。<br>参数含义：\(H_{11} = \left. \frac{\dot{U}_1}{\dot{I}_1} \right|_{\dot{U}_2=0}\)（端口2短路时的输入阻抗），\(H_{12} = \left. \frac{\dot{U}_1}{\dot{U}_2} \right|_{\dot{I}_1=0}\)（端口1开路时的反向电压传输比），\(H_{21} = \left. \frac{\dot{I}_2}{\dot{I}_1} \right|_{\dot{U}_2=0}\)（端口2短路时的正向电流传输比），\(H_{22} = \left. \frac{\dot{I}_2}{\dot{U}_2} \right|_{\dot{I}_1=0}\)（端口1开路时的输出导纳）。<br><strong>应用</strong>：H参数广泛应用于晶体管的小信号建模（如 \(h_{fe}\)、\(h_{ie}\) 等）。</div>
     <h3>§16-3 二端口的等效电路</h3>
-    <div class="text"><strong>一、为什么需要等效电路？</strong> 给定参数（Y、Z、T、H）后，可以用一个简单的等效电路替代原二端口。便于理解和分析二端口对外电路的影响。<strong>二、T形等效电路（对应Z参数）</strong> 对于无源线性二端口（\(Z_{12}=Z_{21}\)）：\(Z_1 = Z_{11} - Z_{12}, \quad Z_2 = Z_{12}, \quad Z_3 = Z_{22} - Z_{12}\)，电路结构：三个阻抗接成T形（星形）。<strong>三、π形等效电路（对应Y参数）</strong> 对于无源线性二端口（\(Y_{12}=Y_{21}\)）：\(Y_1 = Y_{11} + Y_{12}, \quad Y_2 = -Y_{12}, \quad Y_3 = Y_{22} + Y_{21}\)，电路结构：三个导纳接成π形（三角形）。<strong>四、含受控源的二端口等效电路</strong> 当二端口含有受控源时，\(Z_{12} \ne Z_{21}\) 或 \(Y_{12} \ne Y_{21}\)。此时等效电路中需包含受控源。例如，用Z参数表示时：\(\dot{U}_1 = Z_{11}\dot{I}_1 + Z_{12}\dot{I}_2\)，\(\dot{U}_2 = Z_{21}\dot{I}_1 + Z_{22}\dot{I}_2 = Z_{12}\dot{I}_1 + Z_{22}\dot{I}_2 + (Z_{21}-Z_{12})\dot{I}_1\)，这相当于在T形等效电路的基础上，在输出端串联一个CCVS。</div>
-    
+    <div class="text"><strong>一、为什么需要等效电路？</strong><br>给定参数（Y、Z、T、H）后，可以用一个简单的等效电路替代原二端口。便于理解和分析二端口对外电路的影响。<br><strong>二、T形等效电路（对应Z参数）</strong><br>对于无源线性二端口（\(Z_{12}=Z_{21}\)）：\(Z_1 = Z_{11} - Z_{12}, \quad Z_2 = Z_{12}, \quad Z_3 = Z_{22} - Z_{12}\)，电路结构：三个阻抗接成T形（星形）。<br><strong>三、π形等效电路（对应Y参数）</strong><br>对于无源线性二端口（\(Y_{12}=Y_{21}\)）：\(Y_1 = Y_{11} + Y_{12}, \quad Y_2 = -Y_{12}, \quad Y_3 = Y_{22} + Y_{21}\)，电路结构：三个导纳接成π形（三角形）。<br><strong>四、含受控源的二端口等效电路</strong><br>当二端口含有受控源时，\(Z_{12} \ne Z_{21}\) 或 \(Y_{12} \ne Y_{21}\)。此时等效电路中需包含受控源。<br>例如，用Z参数表示时：\(\dot{U}_1 = Z_{11}\dot{I}_1 + Z_{12}\dot{I}_2\)，\(\dot{U}_2 = Z_{21}\dot{I}_1 + Z_{22}\dot{I}_2 = Z_{12}\dot{I}_1 + Z_{22}\dot{I}_2 + (Z_{21}-Z_{12})\dot{I}_1\)，这相当于在T形等效电路的基础上，在输出端串联一个CCVS。</div>
     <h3>§16-4 二端口的转移函数</h3>
-    <div class="text"><strong>定义</strong>：在零初始条件下，输出象函数与输入象函数之比。转移函数是网络函数在二端口中的具体应用。<strong>常见转移函数</strong>：</div>
-    <table>
-        <thead><tr><th>转移函数类型</th><th>表达式</th><th>条件</th></tr></thead>
-        <tbody><tr><td>电压转移函数</td><td>\(\frac{\dot{U}_2}{\dot{U}_1}\)</td><td>\(\dot{I}_2=0\)（输出开路）</td></tr>
-        <tr><td>电流转移函数</td><td>\(\frac{\dot{I}_2}{\dot{I}_1}\)</td><td>\(\dot{U}_2=0\)（输出短路）</td></tr>
-        <tr><td>转移阻抗</td><td>\(\frac{\dot{U}_2}{\dot{I}_1}\)</td><td>\(\dot{I}_2=0\)</td></tr>
-        <tr><td>转移导纳</td><td>\(\frac{\dot{I}_2}{\dot{U}_1}\)</td><td>\(\dot{U}_2=0\)</td></tr></tbody>
-    </table>
-    <div class="text"><strong>用Z参数表示</strong>：\(\frac{\dot{U}_2}{\dot{U}_1} = \frac{Z_{21}}{Z_{11}}, \quad \frac{\dot{I}_2}{\dot{I}_1} = -\frac{Z_{21}}{Z_{22}}, \quad \frac{\dot{U}_2}{\dot{I}_1} = Z_{21}\)。<strong>用Y参数表示</strong>：\(\frac{\dot{U}_2}{\dot{U}_1} = -\frac{Y_{21}}{Y_{22}}, \quad \frac{\dot{I}_2}{\dot{I}_1} = \frac{Y_{21}}{Y_{11}}, \quad \frac{\dot{I}_2}{\dot{U}_1} = Y_{21}\)。</div>
-    
+    <div class="text"><strong>定义</strong>：在零初始条件下，输出象函数与输入象函数之比。转移函数是网络函数在二端口中的具体应用。<br><strong>常见转移函数</strong>：</div>
+    <table><thead><tr><th>转移函数类型</th><th>表达式</th><th>条件</th></tr></thead><tbody><tr><td>电压转移函数</td><td>\(\frac{\dot{U}_2}{\dot{U}_1}\)</td><td>\(\dot{I}_2=0\)（输出开路）</td></tr><tr><td>电流转移函数</td><td>\(\frac{\dot{I}_2}{\dot{I}_1}\)</td><td>\(\dot{U}_2=0\)（输出短路）</td></tr><tr><td>转移阻抗</td><td>\(\frac{\dot{U}_2}{\dot{I}_1}\)</td><td>\(\dot{I}_2=0\)</td></tr><tr><td>转移导纳</td><td>\(\frac{\dot{I}_2}{\dot{U}_1}\)</td><td>\(\dot{U}_2=0\)</td></tr></tbody></table>
+    <div class="text"><strong>用Z参数表示</strong>：\(\frac{\dot{U}_2}{\dot{U}_1} = \frac{Z_{21}}{Z_{11}}, \quad \frac{\dot{I}_2}{\dot{I}_1} = -\frac{Z_{21}}{Z_{22}}, \quad \frac{\dot{U}_2}{\dot{I}_1} = Z_{21}\)。<br><strong>用Y参数表示</strong>：\(\frac{\dot{U}_2}{\dot{U}_1} = -\frac{Y_{21}}{Y_{22}}, \quad \frac{\dot{I}_2}{\dot{I}_1} = \frac{Y_{21}}{Y_{11}}, \quad \frac{\dot{I}_2}{\dot{U}_1} = Y_{21}\)。</div>
     <h3>§16-5 二端口的连接</h3>
-    <div class="text"><strong>一、级联（链联）</strong> 连接方式：第一个二端口的输出端接第二个二端口的输入端。参数：T参数最方便。\(\begin{bmatrix} A & B \\ C & D \end{bmatrix} = \begin{bmatrix} A_1 & B_1 \\ C_1 & D_1 \end{bmatrix} \begin{bmatrix} A_2 & B_2 \\ C_2 & D_2 \end{bmatrix}\)。解释：级联时，总T参数矩阵等于各二端口T参数矩阵的<strong>乘积</strong>（按连接顺序）。<strong>二、并联</strong> 连接方式：两个二端口的输入端并联、输出端并联。条件：并联后各端口的端口条件不被破坏。参数：Y参数最方便。\(Y = Y_1 + Y_2\)。解释：并联时，总Y参数矩阵等于各二端口Y参数矩阵的<strong>和</strong>。<strong>三、串联</strong> 连接方式：两个二端口的输入端串联、输出端串联。条件：串联后各端口的端口条件不被破坏。参数：Z参数最方便。\(Z = Z_1 + Z_2\)。解释：串联时，总Z参数矩阵等于各二端口Z参数矩阵的<strong>和</strong>。</div>
-    
+    <div class="text"><strong>一、级联（链联）</strong><br>连接方式：第一个二端口的输出端接第二个二端口的输入端。<br>参数：T参数最方便。<br>\(\begin{bmatrix} A & B \\ C & D \end{bmatrix} = \begin{bmatrix} A_1 & B_1 \\ C_1 & D_1 \end{bmatrix} \begin{bmatrix} A_2 & B_2 \\ C_2 & D_2 \end{bmatrix}\)。<br>解释：级联时，总T参数矩阵等于各二端口T参数矩阵的<strong>乘积</strong>（按连接顺序）。<br><strong>二、并联</strong><br>连接方式：两个二端口的输入端并联、输出端并联。<br>条件：并联后各端口的端口条件不被破坏。<br>参数：Y参数最方便。<br>\(Y = Y_1 + Y_2\)。<br>解释：并联时，总Y参数矩阵等于各二端口Y参数矩阵的<strong>和</strong>。<br><strong>三、串联</strong><br>连接方式：两个二端口的输入端串联、输出端串联。<br>条件：串联后各端口的端口条件不被破坏。<br>参数：Z参数最方便。<br>\(Z = Z_1 + Z_2\)。<br>解释：串联时，总Z参数矩阵等于各二端口Z参数矩阵的<strong>和</strong>。</div>
     <h3>§16-6 回转器和负阻抗变换器</h3>
-    <div class="text"><strong>一、回转器</strong> 定义：一种线性非互易的二端口元件，其端口特性为：\(\begin{cases} u_1 = -r i_2 \\ u_2 = r i_1 \end{cases}\) 或 \(\begin{cases} i_1 = g u_2 \\ i_2 = -g u_1 \end{cases}\)，\(r\)：回转电阻，单位 \(\Omega\)；\(g = 1/r\)：回转电导，单位 S。重要特性：<strong>功率</strong>：\(u_1 i_1 + u_2 i_2 = 0\)，不消耗功率，是无源元件。<strong>非互易</strong>：\(Z_{12} \ne Z_{21}\)（\(Z_{12} = -r\)，\(Z_{21} = r\)）。<strong>核心应用——电感模拟</strong>：在输出端接电容 \(C\)，则输入端等效为电感：\(Z_{in} = \frac{u_1}{i_1} = \frac{-r i_2}{g u_2} = r^2 \frac{1}{sC} = s(r^2 C)\)，等效电感：\(L_{eq} = r^2 C\)。意义：在集成电路中，大电感难以制造，可以用回转器+电容来模拟电感。<strong>二、负阻抗变换器（NIC）</strong> 定义：一种二端口元件，可以将正阻抗变换为负阻抗。两种类型：1. 电流反向型：\(\begin{cases} U_1 = U_2 \\ I_1 = -k I_2 \end{cases}\)，输入阻抗：\(Z_{in} = \frac{U_1}{I_1} = \frac{U_2}{-k I_2} = -\frac{1}{k} Z_L\)。2. 电压反向型：\(\begin{cases} U_1 = -k U_2 \\ I_1 = I_2 \end{cases}\)，输入阻抗：\(Z_{in} = \frac{U_1}{I_1} = \frac{-k U_2}{I_2} = -k Z_L\)。应用：实现负电阻、负电感、负电容，用于振荡器、有源滤波器等。</div>
+    <div class="text"><strong>一、回转器</strong><br>定义：一种线性非互易的二端口元件，其端口特性为：\(\begin{cases} u_1 = -r i_2 \\ u_2 = r i_1 \end{cases}\) 或 \(\begin{cases} i_1 = g u_2 \\ i_2 = -g u_1 \end{cases}\)，\(r\)：回转电阻，单位 \(\Omega\)；\(g = 1/r\)：回转电导，单位 S。<br>重要特性：<strong>功率</strong>：\(u_1 i_1 + u_2 i_2 = 0\)，不消耗功率，是无源元件。<br><strong>非互易</strong>：\(Z_{12} \ne Z_{21}\)（\(Z_{12} = -r\)，\(Z_{21} = r\)）。<br><strong>核心应用——电感模拟</strong>：在输出端接电容 \(C\)，则输入端等效为电感：<br>\(Z_{in} = \frac{u_1}{i_1} = \frac{-r i_2}{g u_2} = r^2 \frac{1}{sC} = s(r^2 C)\)，等效电感：\(L_{eq} = r^2 C\)。<br>意义：在集成电路中，大电感难以制造，可以用回转器+电容来模拟电感。<br><strong>二、负阻抗变换器（NIC）</strong><br>定义：一种二端口元件，可以将正阻抗变换为负阻抗。<br>两种类型：<br>1. 电流反向型：\(\begin{cases} U_1 = U_2 \\ I_1 = -k I_2 \end{cases}\)，输入阻抗：\(Z_{in} = \frac{U_1}{I_1} = \frac{U_2}{-k I_2} = -\frac{1}{k} Z_L\)。<br>2. 电压反向型：\(\begin{cases} U_1 = -k U_2 \\ I_1 = I_2 \end{cases}\)，输入阻抗：\(Z_{in} = \frac{U_1}{I_1} = \frac{-k U_2}{I_2} = -k Z_L\)。<br>应用：实现负电阻、负电感、负电容，用于振荡器、有源滤波器等。</div>
 </div>
 
-<!-- ======================= 第17章 完整无删减内容 ======================= -->
+<!-- 第17章 完整内容（换行优化） -->
 <div class="chapterPage" id="ch17">
     <div class="backBtn" onclick="showHome()">← 返回首页</div>
     <h2>第十七章 非线性电路</h2>
     <div class="text">本章研究含有非线性元件的电路。核心是理解非线性元件的特性及分析方法。</div>
-    
     <h3>§17-1 非线性电阻</h3>
-    <div class="text"><strong>一、基本概念</strong> - <strong>非线性电阻</strong>：伏安特性不是通过原点的直线，不满足欧姆定律。- <strong>分类</strong>：</div>
-    <table>
-        <thead><tr><th>类型</th><th>特性</th><th>数学表达</th><th>示例</th></tr></thead>
-        <tbody><tr><td>电流控制型</td><td>电压是电流的单值函数</td><td>\(u = f(i)\)</td><td>充气二极管</td></tr>
-        <tr><td>电压控制型</td><td>电流是电压的单值函数</td><td>\(i = g(u)\)</td><td>隧道二极管</td></tr>
-        <tr><td>单调型</td><td>同时满足上述两种</td><td>\(u=f(i), i=g(u)\)</td><td>PN结二极管</td></tr></tbody>
-    </table>
-    <div class="text"><strong>二、静态电阻与动态电阻</strong> - <strong>静态电阻</strong>：\(R = \frac{u}{i}\)，是工作点到原点的连线斜率。- <strong>动态电阻</strong>：\(R_d = \frac{du}{di}\)，是工作点处切线的斜率。- <strong>负电阻</strong>：当伏安特性曲线下倾时，动态电阻为负值。<strong>三、PN结二极管的伏安特性</strong> \(i = I_s(e^{\frac{q}{kT}u} - 1)\)，\(I_s\)：反向饱和电流（很小，约 \(10^{-14}\)A量级），\(\frac{q}{kT} \approx 40 \, \text{V}^{-1}\)（室温下）。特点：正向电压大于0.5V时，电流随电压指数增长；反向电压时，电流趋近于 \(-I_s\)。</div>
-    
+    <div class="text"><strong>一、基本概念</strong><br>- <strong>非线性电阻</strong>：伏安特性不是通过原点的直线，不满足欧姆定律。<br>- <strong>分类</strong>：</div>
+    <table><thead><tr><th>类型</th><th>特性</th><th>数学表达</th><th>示例</th></tr></thead><tbody><tr><td>电流控制型</td><td>电压是电流的单值函数</td><td>\(u = f(i)\)</td><td>充气二极管</td></tr><tr><td>电压控制型</td><td>电流是电压的单值函数</td><td>\(i = g(u)\)</td><td>隧道二极管</td></tr><tr><td>单调型</td><td>同时满足上述两种</td><td>\(u=f(i), i=g(u)\)</td><td>PN结二极管</td></tr></tbody></table>
+    <div class="text"><strong>二、静态电阻与动态电阻</strong><br>- <strong>静态电阻</strong>：\(R = \frac{u}{i}\)，是工作点到原点的连线斜率。<br>- <strong>动态电阻</strong>：\(R_d = \frac{du}{di}\)，是工作点处切线的斜率。<br>- <strong>负电阻</strong>：当伏安特性曲线下倾时，动态电阻为负值。<br><strong>三、PN结二极管的伏安特性</strong><br>\(i = I_s(e^{\frac{q}{kT}u} - 1)\)，\(I_s\)：反向饱和电流（很小，约 \(10^{-14}\)A量级），\(\frac{q}{kT} \approx 40 \, \text{V}^{-1}\)（室温下）。<br>特点：正向电压大于0.5V时，电流随电压指数增长；反向电压时，电流趋近于 \(-I_s\)。</div>
     <h3>§17-2 非线性电容和非线性电感</h3>
-    <div class="text"><strong>一、非线性电容</strong> - <strong>库伏特性</strong>：\(q = f(u)\) 或 \(u = h(q)\)。- <strong>静态电容</strong>：\(C = \frac{q}{u}\)。- <strong>动态电容</strong>：\(C_d = \frac{dq}{du}\)。<strong>二、非线性电感</strong> - <strong>韦安特性</strong>：\(\Psi = f(i)\) 或 \(i = h(\Psi)\)。- <strong>静态电感</strong>：\(L = \frac{\Psi}{i}\)。- <strong>动态电感</strong>：\(L_d = \frac{d\Psi}{di}\)。<strong>三、磁滞现象</strong> 铁磁材料的 \(\Psi-i\) 特性呈<strong>回线形状</strong>：磁化曲线不是单值的，与磁化历史有关。磁滞回线包围的面积代表每周的磁滞损耗。</div>
-    
+    <div class="text"><strong>一、非线性电容</strong><br>- <strong>库伏特性</strong>：\(q = f(u)\) 或 \(u = h(q)\)。<br>- <strong>静态电容</strong>：\(C = \frac{q}{u}\)。<br>- <strong>动态电容</strong>：\(C_d = \frac{dq}{du}\)。<br><strong>二、非线性电感</strong><br>- <strong>韦安特性</strong>：\(\Psi = f(i)\) 或 \(i = h(\Psi)\)。<br>- <strong>静态电感</strong>：\(L = \frac{\Psi}{i}\)。<br>- <strong>动态电感</strong>：\(L_d = \frac{d\Psi}{di}\)。<br><strong>三、磁滞现象</strong><br>铁磁材料的 \(\Psi-i\) 特性呈<strong>回线形状</strong>：磁化曲线不是单值的，与磁化历史有关。磁滞回线包围的面积代表每周的磁滞损耗。</div>
     <h3>§17-3 非线性电路的方程</h3>
-    <div class="text"><strong>特点</strong>：基尔霍夫定律仍然适用。元件特性是非线性的，导致电路方程为<strong>非线性代数方程</strong>或<strong>非线性微分方程</strong>。解可能不唯一，可能有多个工作点。<strong>示例</strong>：\(5u^2 + 6u - 8 = 0 \quad \Rightarrow \quad u = 0.8\text{V} \text{ 或 } u = -2\text{V}\)。</div>
-    
+    <div class="text"><strong>特点</strong>：基尔霍夫定律仍然适用。元件特性是非线性的，导致电路方程为<strong>非线性代数方程</strong>或<strong>非线性微分方程</strong>。<br>解可能不唯一，可能有多个工作点。<br><strong>示例</strong>：\(5u^2 + 6u - 8 = 0 \quad \Rightarrow \quad u = 0.8\text{V} \text{ 或 } u = -2\text{V}\)。</div>
     <h3>§17-4 小信号分析法——核心方法</h3>
-    <div class="text"><strong>适用条件</strong>：电路中有直流偏置 \(U_0\) 和小信号 \(u_s(t)\)，且 \(|u_s(t)| \ll U_0\)。工作点限制在非线性特性的局部线性区域内。<strong>分析步骤</strong>：1. <strong>求静态工作点Q</strong>：令 \(u_s=0\)，解非线性方程，得 \(U_Q, I_Q\)。2. <strong>计算动态参数</strong>：在工作点处求动态电导/电阻。\(G_d = \left. \frac{dg(u)}{du} \right|_{u=U_Q}, \quad R_d = \frac{1}{G_d}\)。3. <strong>作小信号等效电路</strong>：非线性元件用动态电阻 \(R_d\) 替代。直流电源置零（电压源短路，电流源开路）。小信号源保留。4. <strong>求解小信号响应</strong>：在线性电路中计算。5. <strong>叠加</strong>：总响应 = 直流分量 + 小信号分量。\(u(t) = U_Q + u_1(t), \quad i(t) = I_Q + i_1(t)\)。<strong>物理意义</strong>：小信号分析法将非线性问题<strong>局部线性化</strong>。类似于函数在一点处的泰勒展开，取线性项。</div>
-    
+    <div class="text"><strong>适用条件</strong>：电路中有直流偏置 \(U_0\) 和小信号 \(u_s(t)\)，且 \(|u_s(t)| \ll U_0\)。工作点限制在非线性特性的局部线性区域内。<br><strong>分析步骤</strong>：<br>1. <strong>求静态工作点Q</strong>：令 \(u_s=0\)，解非线性方程，得 \(U_Q, I_Q\)。<br>2. <strong>计算动态参数</strong>：在工作点处求动态电导/电阻。<br>\(G_d = \left. \frac{dg(u)}{du} \right|_{u=U_Q}, \quad R_d = \frac{1}{G_d}\)。<br>3. <strong>作小信号等效电路</strong>：非线性元件用动态电阻 \(R_d\) 替代。直流电源置零（电压源短路，电流源开路）。小信号源保留。<br>4. <strong>求解小信号响应</strong>：在线性电路中计算。<br>5. <strong>叠加</strong>：总响应 = 直流分量 + 小信号分量。<br>\(u(t) = U_Q + u_1(t), \quad i(t) = I_Q + i_1(t)\)。<br><strong>物理意义</strong>：小信号分析法将非线性问题<strong>局部线性化</strong>。类似于函数在一点处的泰勒展开，取线性项。</div>
     <h3>§17-5 分段线性化方法</h3>
-    <div class="text"><strong>基本思想</strong>：将非线性伏安特性用若干条直线段近似。在每个线性段内，非线性元件可用线性元件（电阻、电压源）等效。分别计算每个线性段，然后根据工作点所在区域确定有效解。<strong>理想二极管模型</strong>：正向导通：短路（\(R=0\)，\(u=0\)）；反向截止：开路（\(i=0\)）。<strong>隧道二极管的折线近似</strong>：用三条不同斜率的直线段近似其伏安特性（正阻区、负阻区、正阻区）。</div>
-    
+    <div class="text"><strong>基本思想</strong>：将非线性伏安特性用若干条直线段近似。在每个线性段内，非线性元件可用线性元件（电阻、电压源）等效。分别计算每个线性段，然后根据工作点所在区域确定有效解。<br><strong>理想二极管模型</strong>：正向导通：短路（\(R=0\)，\(u=0\)）；反向截止：开路（\(i=0\)）。<br><strong>隧道二极管的折线近似</strong>：用三条不同斜率的直线段近似其伏安特性（正阻区、负阻区、正阻区）。</div>
     <h3>§17-6 工作在非线性范围的运算放大器</h3>
-    <div class="text"><strong>运放的非线性特性</strong>：<strong>线性区</strong>：\(u_d = 0\)，\(-U_{sat} < u_o < U_{sat}\)；<strong>正饱和区</strong>：\(u_o = U_{sat}\)，\(u_d > 0\)；<strong>负饱和区</strong>：\(u_o = -U_{sat}\)，\(u_d < 0\)。<strong>应用</strong>：比较器：输入电压与参考电压比较，输出为高/低电平。滞回比较器（施密特触发器）：引入正反馈，具有抗干扰能力。方波发生器：利用电容充放电和运放饱和特性产生方波。</div>
-    
+    <div class="text"><strong>运放的非线性特性</strong>：<strong>线性区</strong>：\(u_d = 0\)，\(-U_{sat} < u_o < U_{sat}\)；<strong>正饱和区</strong>：\(u_o = U_{sat}\)，\(u_d > 0\)；<strong>负饱和区</strong>：\(u_o = -U_{sat}\)，\(u_d < 0\)。<br><strong>应用</strong>：比较器：输入电压与参考电压比较，输出为高/低电平。滞回比较器（施密特触发器）：引入正反馈，具有抗干扰能力。方波发生器：利用电容充放电和运放饱和特性产生方波。</div>
     <h3>§17-7 二阶非线性电路的状态平面</h3>
-    <div class="text"><strong>状态方程</strong>：\(\frac{dx_1}{dt} = f_1(x_1, x_2), \quad \frac{dx_2}{dt} = f_2(x_1, x_2)\)。<strong>相平面</strong>：以 \(x_1\) 为横坐标、\(x_2\) 为纵坐标的平面。每个点 \((x_1, x_2)\) 代表电路的一个状态。随时间变化的轨迹称为<strong>相轨迹</strong>。<strong>平衡点</strong>：满足 \(f_1=0\) 和 \(f_2=0\) 的点。在平衡点处，状态不再变化。<strong>RLC串联电路的相图</strong>：欠阻尼（\(R<2\sqrt{L/C}\)）：相轨迹为向内螺旋线，收敛于原点。过阻尼（\(R>2\sqrt{L/C}\)）：相轨迹为单调曲线，收敛于原点。无损耗（\(R=0\)）：相轨迹为椭圆，等幅振荡。</div>
-    
+    <div class="text"><strong>状态方程</strong>：\(\frac{dx_1}{dt} = f_1(x_1, x_2), \quad \frac{dx_2}{dt} = f_2(x_1, x_2)\)。<br><strong>相平面</strong>：以 \(x_1\) 为横坐标、\(x_2\) 为纵坐标的平面。每个点 \((x_1, x_2)\) 代表电路的一个状态。随时间变化的轨迹称为<strong>相轨迹</strong>。<br><strong>平衡点</strong>：满足 \(f_1=0\) 和 \(f_2=0\) 的点。在平衡点处，状态不再变化。<br><strong>RLC串联电路的相图</strong>：欠阻尼（\(R<2\sqrt{L/C}\)）：相轨迹为向内螺旋线，收敛于原点。过阻尼（\(R>2\sqrt{L/C}\)）：相轨迹为单调曲线，收敛于原点。无损耗（\(R=0\)）：相轨迹为椭圆，等幅振荡。</div>
     <h3>§17-8 非线性振荡电路——范德坡电路</h3>
-    <div class="text"><strong>电路结构</strong>：线性电感 \(L\)、线性电容 \(C\)、非线性电阻（伏安特性 \(i_R = f(u_R)\)）。<strong>范德坡方程</strong>：\(\frac{d^2x}{dt^2} - \epsilon(1-x^2)\frac{dx}{dt} + x = 0\)。<strong>重要现象——极限环</strong>：在相平面上，存在一条孤立的闭合曲线（极限环）。无论初始条件在环内还是环外，相轨迹最终都趋向于极限环。这解释了<strong>自激振荡</strong>现象：振荡的振幅和频率由电路参数决定，与初始条件无关。</div>
-    
+    <div class="text"><strong>电路结构</strong>：线性电感 \(L\)、线性电容 \(C\)、非线性电阻（伏安特性 \(i_R = f(u_R)\)）。<br><strong>范德坡方程</strong>：\(\frac{d^2x}{dt^2} - \epsilon(1-x^2)\frac{dx}{dt} + x = 0\)。<br><strong>重要现象——极限环</strong>：在相平面上，存在一条孤立的闭合曲线（极限环）。无论初始条件在环内还是环外，相轨迹最终都趋向于极限环。这解释了<strong>自激振荡</strong>现象：振荡的振幅和频率由电路参数决定，与初始条件无关。</div>
     <h3>§17-9 混沌电路简介</h3>
-    <div class="text"><strong>混沌的特征</strong>：<strong>对初始条件极端敏感</strong>：初始值的微小差异会导致完全不同的长期行为（蝴蝶效应）。<strong>非周期性</strong>：永不重复的复杂运动。<strong>有界性</strong>：运动被限制在一定范围内。<strong>蔡氏电路</strong>：最简单的混沌电路之一：两个电容、一个电感、一个线性电阻、一个非线性电阻。状态方程为三阶非线性自治微分方程组。<strong>双涡卷吸引子</strong>：相轨迹呈现两个“涡卷”形状，永不重复。<strong>通向混沌的路径——倍周期分叉</strong>：随着参数变化，系统响应从周期1 → 周期2 → 周期4 → 周期8 → ... → 混沌。</div>
-    
+    <div class="text"><strong>混沌的特征</strong>：<strong>对初始条件极端敏感</strong>：初始值的微小差异会导致完全不同的长期行为（蝴蝶效应）。<strong>非周期性</strong>：永不重复的复杂运动。<strong>有界性</strong>：运动被限制在一定范围内。<br><strong>蔡氏电路</strong>：最简单的混沌电路之一：两个电容、一个电感、一个线性电阻、一个非线性电阻。状态方程为三阶非线性自治微分方程组。<strong>双涡卷吸引子</strong>：相轨迹呈现两个“涡卷”形状，永不重复。<br><strong>通向混沌的路径——倍周期分叉</strong>：随着参数变化，系统响应从周期1 → 周期2 → 周期4 → 周期8 → ... → 混沌。</div>
     <h3>§17-10 人工神经元电路</h3>
-    <div class="text"><strong>人工神经元模型</strong>：输入：多个输入信号 \(x_j\)，每个乘以权重 \(w_j\)。求和：\(\sum w_j x_j + \theta\)（\(\theta\) 为阈值）。激活函数：通常为S形函数（如 sigmoid 函数）。输出：\(y = f(\sum w_j x_j + \theta)\)。<strong>Hopfield神经网络</strong>：用运放实现神经元。每个神经元的输出通过电阻连接到其他神经元的输入。网络的能量函数单调下降，最终收敛到稳定状态。可用于解决优化问题（如旅行商问题）。</div>
+    <div class="text"><strong>人工神经元模型</strong>：输入：多个输入信号 \(x_j\)，每个乘以权重 \(w_j\)。求和：\(\sum w_j x_j + \theta\)（\(\theta\) 为阈值）。激活函数：通常为S形函数（如 sigmoid 函数）。输出：\(y = f(\sum w_j x_j + \theta)\)。<br><strong>Hopfield神经网络</strong>：用运放实现神经元。每个神经元的输出通过电阻连接到其他神经元的输入。网络的能量函数单调下降，最终收敛到稳定状态。可用于解决优化问题（如旅行商问题）。</div>
 </div>
 
-<!-- ======================= 第18章 完整无删减内容 ======================= -->
+<!-- 第18章 完整内容（换行优化） -->
 <div class="chapterPage" id="ch18">
     <div class="backBtn" onclick="showHome()">← 返回首页</div>
     <h2>第十八章 均匀传输线</h2>
     <div class="text">本章从集总参数走向分布参数，研究信号沿传输线的传播特性。核心是理解“长线”与“短线”的区别，以及行波、反射、驻波等概念。</div>
-    
     <h3>§18-1 分布参数电路</h3>
-    <div class="text"><strong>一、为什么需要分布参数模型？</strong> 在集总参数电路中，我们假设：元件间的连接线是理想导线（无电阻、无电感、无电容）。所有电磁过程都集中在元件内部。<strong>但实际情况并非如此</strong>：导线有电阻 → 沿线有电压降。电流产生磁场 → 沿线有电感。导线间有电压 → 沿线有电容和漏电导。<strong>二、长线与短线的区分</strong> - <strong>判断标准</strong>：线长 \(l\) 与工作波长 \(\lambda\) 的比较。- <strong>短线</strong>：\(l \ll \lambda\)，可用集总参数模型。- <strong>长线</strong>：\(l\) 与 \(\lambda\) 可比，必须用分布参数模型。<strong>示例</strong>：工频50Hz：\(\lambda = 6000\text{km}\)，几百公里的输电线仍是“短线”。高频300MHz：\(\lambda = 1\text{m}\)，几十厘米的导线就是“长线”。<strong>三、分布参数的含义</strong> 单位长度的参数：\(R_0\)：单位长度电阻（\(\Omega/\text{m}\)），\(L_0\)：单位长度电感（\(\text{H}/\text{m}\)），\(C_0\)：单位长度电容（\(\text{F}/\text{m}\)），\(G_0\)：单位长度电导（\(\text{S}/\text{m}\)）。</div>
-    
+    <div class="text"><strong>一、为什么需要分布参数模型？</strong><br>在集总参数电路中，我们假设：元件间的连接线是理想导线（无电阻、无电感、无电容）。所有电磁过程都集中在元件内部。<br><strong>但实际情况并非如此</strong>：导线有电阻 → 沿线有电压降。电流产生磁场 → 沿线有电感。导线间有电压 → 沿线有电容和漏电导。<br><strong>二、长线与短线的区分</strong><br>- <strong>判断标准</strong>：线长 \(l\) 与工作波长 \(\lambda\) 的比较。<br>- <strong>短线</strong>：\(l \ll \lambda\)，可用集总参数模型。<br>- <strong>长线</strong>：\(l\) 与 \(\lambda\) 可比，必须用分布参数模型。<br><strong>示例</strong>：工频50Hz：\(\lambda = 6000\text{km}\)，几百公里的输电线仍是“短线”。高频300MHz：\(\lambda = 1\text{m}\)，几十厘米的导线就是“长线”。<br><strong>三、分布参数的含义</strong><br>单位长度的参数：\(R_0\)：单位长度电阻（\(\Omega/\text{m}\)），\(L_0\)：单位长度电感（\(\text{H}/\text{m}\)），\(C_0\)：单位长度电容（\(\text{F}/\text{m}\)），\(G_0\)：单位长度电导（\(\text{S}/\text{m}\)）。</div>
     <h3>§18-2 均匀传输线及其方程</h3>
-    <div class="text"><strong>一、均匀传输线的定义</strong> 传输线的原参数 \(R_0, L_0, C_0, G_0\) 沿线处处相等。常见类型：平行双线、同轴电缆、双芯电缆等。<strong>二、传输线方程（电报方程）</strong> 从微元 \(dx\) 分析，由KCL和KVL得：\(-\frac{\partial u}{\partial x} = R_0 i + L_0 \frac{\partial i}{\partial t}\)，\(-\frac{\partial i}{\partial x} = G_0 u + C_0 \frac{\partial u}{\partial t}\)。这是一组偏微分方程，描述了电压和电流随时间和空间的变化。</div>
-    
+    <div class="text"><strong>一、均匀传输线的定义</strong><br>传输线的原参数 \(R_0, L_0, C_0, G_0\) 沿线处处相等。常见类型：平行双线、同轴电缆、双芯电缆等。<br><strong>二、传输线方程（电报方程）</strong><br>从微元 \(dx\) 分析，由KCL和KVL得：<br>\(-\frac{\partial u}{\partial x} = R_0 i + L_0 \frac{\partial i}{\partial t}\)，<br>\(-\frac{\partial i}{\partial x} = G_0 u + C_0 \frac{\partial u}{\partial t}\)。<br>这是一组偏微分方程，描述了电压和电流随时间和空间的变化。</div>
     <h3>§18-3 均匀传输线方程的正弦稳态解</h3>
-    <div class="text"><strong>一、相量形式的传输线方程</strong> \(-\frac{d\dot{U}}{dx} = Z_0 \dot{I}, \quad -\frac{d\dot{I}}{dx} = Y_0 \dot{U}\)，其中 \(Z_0 = R_0 + j\omega L_0\)，\(Y_0 = G_0 + j\omega C_0\)。<strong>二、波动方程</strong> 对上述方程求导得：\(\frac{d^2\dot{U}}{dx^2} = \gamma^2 \dot{U}, \quad \frac{d^2\dot{I}}{dx^2} = \gamma^2 \dot{I}\)，其中 \(\gamma = \sqrt{Z_0 Y_0} = \alpha + j\beta\) 称为<strong>传播常数</strong>。<strong>三、通解</strong> \(\dot{U}(x) = A_1 e^{-\gamma x} + A_2 e^{\gamma x}\)，\(\dot{I}(x) = \frac{1}{Z_c} (A_1 e^{-\gamma x} - A_2 e^{\gamma x})\)。- <strong>特性阻抗</strong>：\(Z_c = \sqrt{Z_0/Y_0}\)，单位 \(\Omega\)。- <strong>传播常数</strong> \(\gamma = \alpha + j\beta\)：\(\alpha\)：衰减常数（Np/m），表示行波幅度的衰减。\(\beta\)：相位常数（rad/m），表示行波相位的变化。<strong>四、入射波与反射波</strong> \(A_1 e^{-\gamma x}\)：向 \(+x\) 方向传播的<strong>入射波</strong>（从始端向终端）。\(A_2 e^{\gamma x}\)：向 \(-x\) 方向传播的<strong>反射波</strong>（从终端向始端）。</div>
-    
+    <div class="text"><strong>一、相量形式的传输线方程</strong><br>\(-\frac{d\dot{U}}{dx} = Z_0 \dot{I}, \quad -\frac{d\dot{I}}{dx} = Y_0 \dot{U}\)，其中 \(Z_0 = R_0 + j\omega L_0\)，\(Y_0 = G_0 + j\omega C_0\)。<br><strong>二、波动方程</strong><br>对上述方程求导得：\(\frac{d^2\dot{U}}{dx^2} = \gamma^2 \dot{U}, \quad \frac{d^2\dot{I}}{dx^2} = \gamma^2 \dot{I}\)，其中 \(\gamma = \sqrt{Z_0 Y_0} = \alpha + j\beta\) 称为<strong>传播常数</strong>。<br><strong>三、通解</strong><br>\(\dot{U}(x) = A_1 e^{-\gamma x} + A_2 e^{\gamma x}\)，\(\dot{I}(x) = \frac{1}{Z_c} (A_1 e^{-\gamma x} - A_2 e^{\gamma x})\)。<br>- <strong>特性阻抗</strong>：\(Z_c = \sqrt{Z_0/Y_0}\)，单位 \(\Omega\)。<br>- <strong>传播常数</strong> \(\gamma = \alpha + j\beta\)：\(\alpha\)：衰减常数（Np/m），表示行波幅度的衰减。\(\beta\)：相位常数（rad/m），表示行波相位的变化。<br><strong>四、入射波与反射波</strong><br>\(A_1 e^{-\gamma x}\)：向 \(+x\) 方向传播的<strong>入射波</strong>（从始端向终端）。\(A_2 e^{\gamma x}\)：向 \(-x\) 方向传播的<strong>反射波</strong>（从终端向始端）。</div>
     <h3>§18-4 均匀传输线的原参数和副参数</h3>
-    <div class="text"><strong>一、副参数</strong> - <strong>传播常数</strong> \(\gamma = \sqrt{(R_0 + j\omega L_0)(G_0 + j\omega C_0)}\)- <strong>特性阻抗</strong> \(Z_c = \sqrt{\frac{R_0 + j\omega L_0}{G_0 + j\omega C_0}}\)<strong>二、衰减常数和相位常数的计算</strong> \(\alpha = \sqrt{\frac{1}{2} \left[ \sqrt{(R_0^2 + \omega^2 L_0^2)(G_0^2 + \omega^2 C_0^2)} + (R_0 G_0 - \omega^2 L_0 C_0) \right]}\)，\(\beta = \sqrt{\frac{1}{2} \left[ \sqrt{(R_0^2 + \omega^2 L_0^2)(G_0^2 + \omega^2 C_0^2)} - (R_0 G_0 - \omega^2 L_0 C_0) \right]}\)。<strong>三、无畸变条件</strong> - <strong>条件</strong>：\(\frac{R_0}{L_0} = \frac{G_0}{C_0}\)- <strong>结果</strong>：\(\alpha = \sqrt{R_0 G_0}\)（与频率无关），\(\beta = \omega \sqrt{L_0 C_0}\)（与频率成正比）。- <strong>意义</strong>：不同频率的信号衰减相同、传播速度相同，波形不畸变。</div>
-    
+    <div class="text"><strong>一、副参数</strong><br>- <strong>传播常数</strong> \(\gamma = \sqrt{(R_0 + j\omega L_0)(G_0 + j\omega C_0)}\)<br>- <strong>特性阻抗</strong> \(Z_c = \sqrt{\frac{R_0 + j\omega L_0}{G_0 + j\omega C_0}}\)<br><strong>二、衰减常数和相位常数的计算</strong><br>\(\alpha = \sqrt{\frac{1}{2} \left[ \sqrt{(R_0^2 + \omega^2 L_0^2)(G_0^2 + \omega^2 C_0^2)} + (R_0 G_0 - \omega^2 L_0 C_0) \right]}\)，<br>\(\beta = \sqrt{\frac{1}{2} \left[ \sqrt{(R_0^2 + \omega^2 L_0^2)(G_0^2 + \omega^2 C_0^2)} - (R_0 G_0 - \omega^2 L_0 C_0) \right]}\)。<br><strong>三、无畸变条件</strong><br>- <strong>条件</strong>：\(\frac{R_0}{L_0} = \frac{G_0}{C_0}\)<br>- <strong>结果</strong>：\(\alpha = \sqrt{R_0 G_0}\)（与频率无关），\(\beta = \omega \sqrt{L_0 C_0}\)（与频率成正比）。<br>- <strong>意义</strong>：不同频率的信号衰减相同、传播速度相同，波形不畸变。</div>
     <h3>§18-5 无损耗传输线</h3>
-    <div class="text"><strong>一、无损耗条件</strong> \(R_0 = 0, \quad G_0 = 0\)<strong>二、参数简化</strong> \(\gamma = j\omega \sqrt{L_0 C_0} = j\beta\)，\(\alpha = 0\)（无衰减），\(Z_c = \sqrt{\frac{L_0}{C_0}}\)（纯电阻，与频率无关），相速度：\(v_p = \frac{\omega}{\beta} = \frac{1}{\sqrt{L_0 C_0}}\)<strong>三、终端开路时的驻波</strong> - <strong>电压</strong>：\(u(x,t) = \sqrt{2} U_2 \cos(\beta x) \cos(\omega t)\)（注意：这里 \(x\) 是距终端的距离）- <strong>电流</strong>：\(i(x,t) = \sqrt{2} \frac{U_2}{Z_c} \sin(\beta x) \sin(\omega t)\)<strong>特点</strong>：<strong>电压波腹</strong>：\(\cos(\beta x) = \pm 1\) 处，即 \(x = k\frac{\lambda}{2}\)（\(k=0,1,2,\dots\)）；<strong>电压波节</strong>：\(\cos(\beta x) = 0\) 处，即 \(x = (2k+1)\frac{\lambda}{4}\)；电压和电流在空间上相差 \(\lambda/4\)（相位差 \(90^\circ\)）。<strong>四、终端短路时的驻波</strong> - <strong>电压</strong>：\(u(x,t) = \sqrt{2} Z_c I_2 \sin(\beta x) \cos(\omega t)\)- <strong>电流</strong>：\(i(x,t) = \sqrt{2} I_2 \cos(\beta x) \sin(\omega t)\)<strong>特点</strong>：与开路情况相比，电压和电流的波腹、波节位置互换（移动 \(\lambda/4\)）。<strong>五、输入阻抗</strong> - <strong>开路时</strong>：\(Z_{in} = -j Z_c \cot(\beta l)\)- <strong>短路时</strong>：\(Z_{in} = j Z_c \tan(\beta l)\)<strong>应用</strong>：长度 \(<\lambda/4\) 的开路线 → 等效电容；长度 \(<\lambda/4\) 的短路线 → 等效电感；长度 \(=\lambda/4\) 的线 → 阻抗变换器：\(Z_{in} = Z_c^2 / Z_L\)。</div>
-    
+    <div class="text"><strong>一、无损耗条件</strong> \(R_0 = 0, \quad G_0 = 0\)<br><strong>二、参数简化</strong><br>\(\gamma = j\omega \sqrt{L_0 C_0} = j\beta\)，\(\alpha = 0\)（无衰减），\(Z_c = \sqrt{\frac{L_0}{C_0}}\)（纯电阻，与频率无关），相速度：\(v_p = \frac{\omega}{\beta} = \frac{1}{\sqrt{L_0 C_0}}\)<br><strong>三、终端开路时的驻波</strong><br>- <strong>电压</strong>：\(u(x,t) = \sqrt{2} U_2 \cos(\beta x) \cos(\omega t)\)（注意：这里 \(x\) 是距终端的距离）<br>- <strong>电流</strong>：\(i(x,t) = \sqrt{2} \frac{U_2}{Z_c} \sin(\beta x) \sin(\omega t)\)<br><strong>特点</strong>：<strong>电压波腹</strong>：\(\cos(\beta x) = \pm 1\) 处，即 \(x = k\frac{\lambda}{2}\)（\(k=0,1,2,\dots\)）；<strong>电压波节</strong>：\(\cos(\beta x) = 0\) 处，即 \(x = (2k+1)\frac{\lambda}{4}\)；电压和电流在空间上相差 \(\lambda/4\)（相位差 \(90^\circ\)）。<br><strong>四、终端短路时的驻波</strong><br>- <strong>电压</strong>：\(u(x,t) = \sqrt{2} Z_c I_2 \sin(\beta x) \cos(\omega t)\)<br>- <strong>电流</strong>：\(i(x,t) = \sqrt{2} I_2 \cos(\beta x) \sin(\omega t)\)<br><strong>特点</strong>：与开路情况相比，电压和电流的波腹、波节位置互换（移动 \(\lambda/4\)）。<br><strong>五、输入阻抗</strong><br>- <strong>开路时</strong>：\(Z_{in} = -j Z_c \cot(\beta l)\)<br>- <strong>短路时</strong>：\(Z_{in} = j Z_c \tan(\beta l)\)<br><strong>应用</strong>：长度 \(<\lambda/4\) 的开路线 → 等效电容；长度 \(<\lambda/4\) 的短路线 → 等效电感；长度 \(=\lambda/4\) 的线 → 阻抗变换器：\(Z_{in} = Z_c^2 / Z_L\)。</div>
     <h3>§18-6 无损耗线方程的通解（时域）</h3>
-    <div class="text">无损耗线的时域方程：\(\frac{\partial u}{\partial x} = -L_0 \frac{\partial i}{\partial t}, \quad \frac{\partial i}{\partial x} = -C_0 \frac{\partial u}{\partial t}\)。<strong>通解</strong>：\(u(x,t) = u_1\left(t - \frac{x}{v}\right) + u_2\left(t + \frac{x}{v}\right)\)，\(i(x,t) = \frac{1}{Z_c} \left[ u_1\left(t - \frac{x}{v}\right) - u_2\left(t + \frac{x}{v}\right) \right]\)，其中 \(v = 1/\sqrt{L_0 C_0}\)：波速，\(u_1(t - x/v)\)：向 \(+x\) 方向传播的正向行波，\(u_2(t + x/v)\)：向 \(-x\) 方向传播的反向行波。</div>
-    
+    <div class="text">无损耗线的时域方程：\(\frac{\partial u}{\partial x} = -L_0 \frac{\partial i}{\partial t}, \quad \frac{\partial i}{\partial x} = -C_0 \frac{\partial u}{\partial t}\)。<br><strong>通解</strong>：<br>\(u(x,t) = u_1\left(t - \frac{x}{v}\right) + u_2\left(t + \frac{x}{v}\right)\)，<br>\(i(x,t) = \frac{1}{Z_c} \left[ u_1\left(t - \frac{x}{v}\right) - u_2\left(t + \frac{x}{v}\right) \right]\)，<br>其中 \(v = 1/\sqrt{L_0 C_0}\)：波速，\(u_1(t - x/v)\)：向 \(+x\) 方向传播的正向行波，\(u_2(t + x/v)\)：向 \(-x\) 方向传播的反向行波。</div>
     <h3>§18-7 无损耗线的波过程</h3>
-    <div class="text"><strong>一、波的产生与传播</strong> 当开关闭合瞬间：电压波以速度 \(v\) 沿传输线传播。同时伴随电流波：\(i = u / Z_c\)。能量以电磁波形式传输。<strong>二、波的反射</strong> - <strong>终端开路</strong>：电流反射波与入射波大小相等、方向相反（使总电流为零）；电压反射波与入射波大小相等、方向相同（使总电压加倍）。- <strong>终端短路</strong>：电压反射波与入射波大小相等、方向相反；电流反射波与入射波大小相等、方向相同。<strong>三、多次反射过程（以开路线接直流为例）</strong> 1. \(0 < t < l/v\)：入射波传播，沿线电压 \(U_0\)，电流 \(I_0 = U_0/Z_c\)。2. \(t = l/v\)：波到达终端，发生反射。电压变为 \(2U_0\)，电流变为 0。3. \(l/v < t < 2l/v\)：反射波向始端传播。4. \(t = 2l/v\)：波到达始端，再次反射。电压变为 \(U_0\)，电流变为 \(-I_0\)。5. 如此循环，周期 \(T = 4l/v\)。<strong>四、匹配</strong> - 当负载电阻 \(R_L = Z_c\) 时，无反射波（匹配）。- 能量全部被负载吸收，传输效率最高。- 这是通信线路追求的理想状态。</div>
+    <div class="text"><strong>一、波的产生与传播</strong><br>当开关闭合瞬间：电压波以速度 \(v\) 沿传输线传播。同时伴随电流波：\(i = u / Z_c\)。能量以电磁波形式传输。<br><strong>二、波的反射</strong><br>- <strong>终端开路</strong>：电流反射波与入射波大小相等、方向相反（使总电流为零）；电压反射波与入射波大小相等、方向相同（使总电压加倍）。<br>- <strong>终端短路</strong>：电压反射波与入射波大小相等、方向相反；电流反射波与入射波大小相等、方向相同。<br><strong>三、多次反射过程（以开路线接直流为例）</strong><br>1. \(0 < t < l/v\)：入射波传播，沿线电压 \(U_0\)，电流 \(I_0 = U_0/Z_c\)。<br>2. \(t = l/v\)：波到达终端，发生反射。电压变为 \(2U_0\)，电流变为 0。<br>3. \(l/v < t < 2l/v\)：反射波向始端传播。<br>4. \(t = 2l/v\)：波到达始端，再次反射。电压变为 \(U_0\)，电流变为 \(-I_0\)。<br>5. 如此循环，周期 \(T = 4l/v\)。<br><strong>四、匹配</strong><br>- 当负载电阻 \(R_L = Z_c\) 时，无反射波（匹配）。<br>- 能量全部被负载吸收，传输效率最高。<br>- 这是通信线路追求的理想状态。</div>
 </div>
 
 </div>
-    <!-- ======================= 新增习题测验模块 (Quiz Page) ======================= -->
+
+    <!-- 习题测验主面板 -->
     <div class="quizPage" id="quizPage">
         <div class="quiz-header">
-            <h2>📝 电路理论 · 章节测验</h2>
-            <p>精选习题 | 巩固核心知识点 | 后续可扩充海量题库</p>
+            <h2>📝 章节同步习题测验</h2>
+            <p>每章精选25道核心题 | 覆盖全部知识点 | 实时判析</p>
+            <div class="quiz-chapter-selector">
+                <label>选择章节：</label>
+                <select id="chapterSelectQuiz"></select>
+                <button id="loadChapterQuizBtn">📖 加载本章习题</button>
+            </div>
         </div>
-        <!-- 题目容器，后续可动态扩充，目前展示三道代表性题目，涵盖电路定理、一阶电路、正弦稳态 -->
         <div id="questionsContainer"></div>
         <div class="quiz-actions">
             <button class="quiz-btn" id="submitQuizBtn">✅ 提交答案</button>
@@ -1199,310 +1056,26 @@
         </div>
         <div id="scoreArea" class="score-area" style="display: none;"></div>
     </div>
+
+    
+    <div class="aiPanel" id="aiPanel">
+        <div class="ai-header">
+            <h3>🤖 电路答疑AI助手</h3>
+            <p>随时提问电路理论问题，智能体为您解答</p>
+            <button id="closeAIPanel" class="ai-close-btn">✕</button>
+        </div>
+        <div id="cozeChatContainer" class="coze-container"></div>
+    </div>
 </div>
 
-<footer>电路答疑君 © 2026 | 基于邱关源《电路》第五版 | 章节知识 + 习题测验</footer>
+   
 
-<script src="https://lf-cdn.coze.cn/obj/unpkg/flow-platform/chat-app-sdk/1.2.0-beta.19/libs/cn/index.js"></script>
-<script>
-  // Coze SDK 初始化 (保持不变)
-  if (typeof CozeWebSDK !== 'undefined') {
-    new CozeWebSDK.WebChatClient({
-      config: { bot_id: '7562589144795611151', is1frame: false },
-      componentProps: { title: 'Coze' },
-      auth: {
-        type: 'token',
-        token: 'pat_U1NGpL2RCPd7axIdeyhbnPG7pTLjkgu5tr9PsHNd0BAbVEFCJBplhDGafdiYVB0w',
-        onRefreshToken: function () { return 'pat_U1NGpL2RCPd7axIdeyhbnPG7pTLjkgu5tr9PsHNd0BAbVEFCJBplhDGafdiYVB0w'; }
-      }
-    });
-  }
+<footer>
+    电路答疑君 © 2026 
+</footer>
 
-  // ---------- 页面模式切换 ----------
-  // 全局控制显示: "knowledge" 或 "quiz"
-  let currentMode = "knowledge";   // knowledge: 显示章节列表/章节详情; quiz: 显示测验模块
-
-  // 获取元素
-  const homePageDiv = document.getElementById('homePage');
-  const quizPageDiv = document.getElementById('quizPage');
-  const allChapterPages = document.querySelectorAll('.chapterPage');
-  const navKnowledge = document.getElementById('navKnowledgeBtn');
-  const navQuiz = document.getElementById('navQuizBtn');
-
-  // 切换高亮样式
-  function updateNavActive() {
-    if (currentMode === 'knowledge') {
-      navKnowledge.classList.add('active-mode');
-      navQuiz.classList.remove('active-mode');
-    } else {
-      navQuiz.classList.add('active-mode');
-      navKnowledge.classList.remove('active-mode');
-    }
-  }
-
-  // 切换到知识模式（显示章节首页或已打开的章节页）
-  function switchToKnowledge() {
-    currentMode = 'knowledge';
-    // 隐藏测验页面
-    quizPageDiv.style.display = 'none';
-    // 判断当前是否有某个章节处于打开状态: 遍历章节页，若某个章节 display === 'block' 则保留，否则显示首页
-    let anyChapterOpen = false;
-    allChapterPages.forEach(page => {
-      if (page.style.display === 'block') anyChapterOpen = true;
-    });
-    if (!anyChapterOpen) {
-      homePageDiv.style.display = 'block';
-    } else {
-      homePageDiv.style.display = 'none';
-    }
-    updateNavActive();
-  }
-
-  // 切换到测验模式
-  function switchToQuiz() {
-    currentMode = 'quiz';
-    // 隐藏所有章节相关区域
-    homePageDiv.style.display = 'none';
-    allChapterPages.forEach(page => page.style.display = 'none');
-    // 显示测验页面
-    quizPageDiv.style.display = 'block';
-    updateNavActive();
-    // 可选：每次进入测验刷新分数显示状态（不清除用户选择，但重置区域不自动重置题目，保留之前选择；体验更好）
-    // 为了不丢失用户已选，保留原有数据，但提交后分数展示保留；reset按钮可用。
-  }
-
-  // 保留原来的showHome和openChapter函数，但需要适配模式切换: 在知识模式下有效
-  window.showHome = function() {
-    if (currentMode !== 'knowledge') return;
-    homePageDiv.style.display = 'block';
-    allChapterPages.forEach(p => p.style.display = 'none');
-  };
-  window.openChapter = function(num) {
-    if (currentMode !== 'knowledge') return;
-    homePageDiv.style.display = 'none';
-    allChapterPages.forEach(p => p.style.display = 'none');
-    const targetChapter = document.getElementById('ch'+num);
-    if (targetChapter) targetChapter.style.display = 'block';
-  };
-
-  // 修正初始状态：默认显示知识首页，测验隐藏，高亮知识
-  currentMode = "knowledge";
-  quizPageDiv.style.display = 'none';
-  homePageDiv.style.display = 'block';
-  allChapterPages.forEach(p => p.style.display = 'none');
-  updateNavActive();
-
-  // ---------- 习题测验核心逻辑 (三道示例题目，后续可扩展) ----------
-  // 题库数据 (每个题目包含id, 题干文本, 选项数组, 正确答案(索引0~), 解析)
-  const questionBank = [
-    {
-      id: 1,
-      title: "叠加定理应用",
-      text: "在线性电阻电路中，当多个独立电源共同作用时，某支路的响应等于各独立电源单独作用时在该支路产生的响应的代数和。下列关于叠加定理的说法，哪一个是正确的？",
-      options: ["功率可以直接叠加", "适用于非线性电路", "受控源需要保留在各分电路中", "电压源置零时用开路代替"],
-      answerIndex: 2,  // 受控源需要保留在各分电路中
-      explanation: "叠加定理只适用于线性电路，功率不能叠加（因为功率是二次函数）；电压源置零应短路，电流源置零开路；受控源必须保留在各分电路中。"
-    },
-    {
-      id: 2,
-      title: "一阶电路三要素",
-      text: "RC串联电路，已知电容初始电压为2V，直流电压源为10V，电阻R=1kΩ，电容C=100μF。开关在t=0时闭合，求t>0时电容电压u_C(t)的表达式。",
-      options: ["u_C(t)=10-8e^{-10t} V", "u_C(t)=10+2e^{-10t} V", "u_C(t)=10-8e^{-t} V", "u_C(t)=2+8e^{-10t} V"],
-      answerIndex: 0,
-      explanation: "三要素法：u_C(∞)=10V，u_C(0+)=2V，时间常数τ=RC=0.1s，故u_C(t)=10+(2-10)e^{-t/0.1}=10-8e^{-10t} V。"
-    },
-    {
-      id: 3,
-      title: "正弦稳态与复功率",
-      text: "某正弦稳态电路中，已知端口电压相量 \(\\dot{U}=100\\angle 0^\\circ V\)，电流相量 \(\\dot{I}=5\\angle -30^\\circ A\)，则该端口负载的有功功率P和无功功率Q分别为？",
-      options: ["P=433W, Q=250var", "P=250W, Q=433var", "P=500W, Q=0var", "P=433W, Q=-250var"],
-      answerIndex: 0,
-      explanation: "视在功率S=UI=500VA，功率因数角φ=0-(-30°)=30°，P=UIcosφ=500×0.866=433W，Q=UIsinφ=500×0.5=250var (感性)。"
-    }
-  ];
-
-  let userSelections = [];  // 存储每道题选择的选项索引, -1表示未选
-  let quizSubmitted = false;
-
-  // 渲染测验题目
-  function renderQuiz() {
-    const container = document.getElementById('questionsContainer');
-    if (!container) return;
-    container.innerHTML = '';
-    userSelections = new Array(questionBank.length).fill(-1);
-    questionBank.forEach((q, idx) => {
-      const qCard = document.createElement('div');
-      qCard.className = 'question-card';
-      qCard.setAttribute('data-qidx', idx);
-      // 头部
-      const titleDiv = document.createElement('div');
-      titleDiv.className = 'question-title';
-      titleDiv.innerHTML = `<span class="question-badge">第${idx+1}题</span> <span>${q.title}</span>`;
-      // 题干
-      const textDiv = document.createElement('div');
-      textDiv.className = 'question-text';
-      // 使用MathJax渲染可能包含的LaTeX
-      textDiv.innerHTML = q.text;
-      // 选项列表
-      const optionsUl = document.createElement('ul');
-      optionsUl.className = 'options';
-      q.options.forEach((opt, optIdx) => {
-        const li = document.createElement('li');
-        li.innerHTML = `<span>${String.fromCharCode(65+optIdx)}. ${opt}</span>`;
-        li.dataset.optIndex = optIdx;
-        li.addEventListener('click', (e) => {
-          e.stopPropagation();
-          if (quizSubmitted) return; // 提交后不能更改
-          // 更新选中样式
-          const parentCard = li.closest('.question-card');
-          const allOptions = parentCard.querySelectorAll('.options li');
-          allOptions.forEach(optLi => optLi.classList.remove('option-selected'));
-          li.classList.add('option-selected');
-          // 保存选择
-          userSelections[idx] = optIdx;
-          // 清除该题之前的反馈样式(若之前展示过提交反馈但未重置，刷新反馈区)
-          const existingFeedback = parentCard.querySelector('.feedback');
-          if (existingFeedback) existingFeedback.remove();
-        });
-        optionsUl.appendChild(li);
-      });
-      qCard.appendChild(titleDiv);
-      qCard.appendChild(textDiv);
-      qCard.appendChild(optionsUl);
-      // 反馈区容器(初始没有)
-      container.appendChild(qCard);
-    });
-    // 重置提交状态标志 & 清除分数显示
-    quizSubmitted = false;
-    const scoreDiv = document.getElementById('scoreArea');
-    if (scoreDiv) scoreDiv.style.display = 'none';
-    // 重置所有高亮以及可能残留反馈
-    document.querySelectorAll('.feedback').forEach(fb => fb.remove());
-  }
-
-  // 提交答案并评分，展示解析
-  function submitQuiz() {
-    if (quizSubmitted) {
-      // 若已提交，可再次重新评分（刷新解析）但为保持交互，允许重新评分
-      // 不重置用户选择，直接刷新反馈
-      evaluateAndShowScores(true);
-      return;
-    }
-    evaluateAndShowScores(false);
-    quizSubmitted = true;
-  }
-
-  function evaluateAndShowScores(forceReshow = false) {
-    let correctCount = 0;
-    // 先清除所有现有的反馈内容
-    for (let i = 0; i < questionBank.length; i++) {
-      const card = document.querySelector(`.question-card[data-qidx='${i}']`);
-      if (!card) continue;
-      const oldFeedback = card.querySelector('.feedback');
-      if (oldFeedback) oldFeedback.remove();
-    }
-    // 逐题评价并生成反馈
-    for (let i = 0; i < questionBank.length; i++) {
-      const q = questionBank[i];
-      const selected = userSelections[i];
-      const card = document.querySelector(`.question-card[data-qidx='${i}']`);
-      if (!card) continue;
-      const isCorrect = (selected === q.answerIndex);
-      if (isCorrect && selected !== -1) correctCount++;
-      // 创建反馈div
-      const feedbackDiv = document.createElement('div');
-      feedbackDiv.className = 'feedback';
-      let feedbackMsg = '';
-      if (selected === -1) {
-        feedbackMsg = `❌ 未作答。正确答案：${String.fromCharCode(65+q.answerIndex)}. ${q.options[q.answerIndex]}。解析：${q.explanation}`;
-        feedbackDiv.classList.add('wrong');
-      } else if (isCorrect) {
-        feedbackMsg = `✅ 回答正确！解析：${q.explanation}`;
-        feedbackDiv.classList.add('correct');
-      } else {
-        feedbackMsg = `❌ 选择错误。正确答案是 ${String.fromCharCode(65+q.answerIndex)}. ${q.options[q.answerIndex]}。解析：${q.explanation}`;
-        feedbackDiv.classList.add('wrong');
-      }
-      feedbackDiv.innerHTML = feedbackMsg;
-      card.appendChild(feedbackDiv);
-      // 若已选但未高亮同步 (防止reset后提交高亮未还原) 
-      if (selected !== -1) {
-        const allOpts = card.querySelectorAll('.options li');
-        allOpts.forEach((li, idx) => {
-          if (idx === selected) li.classList.add('option-selected');
-          else li.classList.remove('option-selected');
-        });
-      } else {
-        const allOpts = card.querySelectorAll('.options li');
-        allOpts.forEach(li => li.classList.remove('option-selected'));
-      }
-    }
-    const total = questionBank.length;
-    const scoreDiv = document.getElementById('scoreArea');
-    scoreDiv.style.display = 'block';
-    scoreDiv.innerHTML = `📊 得分: ${correctCount} / ${total}  (${Math.round(correctCount/total*100)}分)  ${
-        correctCount === total ? '🎉 太棒了！电路理论扎实！' : '📚 可回顾对应章节再练习~'}`;
-  }
-
-  // 重置所有选项 (清除所有选项选中，清除反馈，重置userSelections)
-  function resetQuiz() {
-    if (!quizPageDiv || quizPageDiv.style.display !== 'block') return;
-    // 重置用户选择数组
-    userSelections.fill(-1);
-    quizSubmitted = false;
-    // 移除所有高亮和反馈框
-    for (let i = 0; i < questionBank.length; i++) {
-      const card = document.querySelector(`.question-card[data-qidx='${i}']`);
-      if (card) {
-        const optionsLis = card.querySelectorAll('.options li');
-        optionsLis.forEach(li => li.classList.remove('option-selected'));
-        const fb = card.querySelector('.feedback');
-        if (fb) fb.remove();
-      }
-    }
-    const scoreDiv = document.getElementById('scoreArea');
-    if (scoreDiv) scoreDiv.style.display = 'none';
-  }
-
-  // 初始化习题测验界面
-  function initQuiz() {
-    renderQuiz();
-    const submitBtn = document.getElementById('submitQuizBtn');
-    const resetBtn = document.getElementById('resetQuizBtn');
-    if (submitBtn) submitBtn.onclick = () => submitQuiz();
-    if (resetBtn) resetBtn.onclick = () => resetQuiz();
-  }
-
-  // 当页面加载完成，初始化习题测验，同时确保MathJax渲染
-  window.addEventListener('DOMContentLoaded', () => {
-    initQuiz();
-    if (window.MathJax) {
-      MathJax.typesetPromise && MathJax.typesetPromise();
-    }
-  });
-
-  // 监听MathJax渲染新内容 (切换测验或提交后不会丢失LaTeX，重新调用)
-  function rerenderMath() {
-    if (window.MathJax) {
-      MathJax.typesetPromise && MathJax.typesetPromise();
-    }
-  }
-  // 每次打开quiz重新渲染公式，并且重置提交视觉（但不重置选择，保持reset可控）
-  const originalSwitchToQuiz = switchToQuiz;
-  window.switchToQuiz = function() {
-    originalSwitchToQuiz();
-    rerenderMath();
-  };
-  window.switchToKnowledge = switchToKnowledge;
-  // 覆盖避免冲突
-  window.switchToQuiz = function() {
-    if (currentMode === 'quiz') return;
-    originalSwitchToQuiz();
-    rerenderMath();
-  };
-  // 确保导航绑定
-  document.getElementById('navKnowledgeBtn').onclick = () => switchToKnowledge();
-  document.getElementById('navQuizBtn').onclick = () => window.switchToQuiz();
-</script>
+<!-- 外部 JS 文件 -->
+<script src="script.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
 </body>
 </html>
